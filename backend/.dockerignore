@@ -1,0 +1,13 @@
+# Archivos generados
+main
+*.exe
+
+# Archivos del sistema
+.env
+*.log
+*.out
+.DS_Store
+
+# VCS
+.git
+.gitignore

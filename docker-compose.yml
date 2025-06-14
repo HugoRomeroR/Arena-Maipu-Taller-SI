@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8080
+
+  backend:
+    build:
+      context: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - DB_HOST=shinkansen.proxy.rlwy.net
+      - DB_PORT=57524
+      - DB_USER=postgres
+      - DB_NAME=railway
+      - DB_PASSWORD=gpVlquDIwxLLqmbBtyFJHlAJUXNISoth
+    volumes:
+    - ./backend/.env:/root/.env
