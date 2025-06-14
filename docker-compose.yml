@@ -16,11 +16,5 @@ services:
       context: ./backend
     ports:
       - "8080:8080"
-    environment:
-      - DB_HOST=shinkansen.proxy.rlwy.net
-      - DB_PORT=57524
-      - DB_USER=postgres
-      - DB_NAME=railway
-      - DB_PASSWORD=gpVlquDIwxLLqmbBtyFJHlAJUXNISoth
-    volumes:
-    - ./backend/.env:/root/.env
+    env_file:
+      - ./backend/.env
