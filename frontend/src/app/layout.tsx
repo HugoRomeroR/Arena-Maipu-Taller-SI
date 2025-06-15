@@ -3,17 +3,42 @@
 import Image from "next/image";
 import amlogo from "../../public/amlogo.png";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import './globals.css';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Estado para manejar el hover del botón de inicio de sesión
   const [hoverLogin, setHoverLogin] = useState(false)
 
+  // Estado para verificar si hay scroll activo
+  const [haveScroll, setHaveScroll] = useState(false);
+
+  // Comprobando scroll tras redimensionar la ventana
+  useEffect(() => {
+    const checkScroll = () => {
+      const body = document.getElementById('body');
+      if (body instanceof HTMLElement) {
+        const isScrollActive = body.scrollHeight > body.clientHeight;
+        setHaveScroll(isScrollActive);
+      }
+    };
+    
+    // Se ejecutará cada vez que la ventana se redimensione
+    window.addEventListener('resize', checkScroll);
+
+    // Llamar a la función al cargar el componente para verificar el scroll inicial
+    setTimeout(checkScroll, 0);
+
+    return () => {
+      window.removeEventListener('resize', checkScroll);
+    };
+  }, []);
+
   return (
     <html lang="es">
       <title>Arena Maipú</title>
       <meta name="Arena Maipú" content="Reserva de canchas para recintos de Arena Maipú" />
-      <body style={styles.pageBody}>
+      <body id='body' className= 'scrollbarLayout' style={styles.pageBody}>
         <div style={styles.headerWrapper}>
           <div style={styles.headerBox}>
             
@@ -46,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               style={{
                 ...styles.loginButton,
                 ...(hoverLogin ? styles.loginButtonHover : {}),
+                ...(haveScroll ? { marginRight: '48px' } : { marginRight: '24px' }),
               }}
               onMouseEnter={() => setHoverLogin(true)}
               onMouseLeave={() => setHoverLogin(false)}
@@ -64,11 +90,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 const styles: { [key: string]: React.CSSProperties } = {
 pageBody: {
   position: "relative",
-  minHeight: "100vh",
+  height: '100vh',
   width: "100vw",
-  background: "#AEAEAE",
-  margin: 0,
-  padding: 0,
+  background: "#D9D9D9",
+  margin: '0',
+  padding: '0',
   boxSizing: "border-box",
   overflowX: 'hidden',
 },
