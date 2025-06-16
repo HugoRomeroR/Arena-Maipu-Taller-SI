@@ -27,7 +27,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     window.addEventListener('resize', checkScroll);
 
     // Llamar a la función al cargar el componente para verificar el scroll inicial
-    setTimeout(checkScroll, 0);
+    setTimeout(checkScroll, 1000);
 
     return () => {
       window.removeEventListener('resize', checkScroll);
@@ -81,23 +81,26 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           
           </div>
         </div>
-        {children}
+        <div style={{ ...(haveScroll ? { marginRight: '24px' } : {marginRight: '0px' }) }}>
+          {children}
+        </div>
       </body>
     </html>
   );
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-pageBody: {
-  position: "relative",
-  height: '100vh',
-  width: "100vw",
-  background: "#D9D9D9",
-  margin: '0',
-  padding: '0',
-  boxSizing: "border-box",
-  overflowX: 'hidden',
-},
+  pageBody: {
+    position: "relative",
+    height: '100vh',
+    width: "100vw",
+    maxWidth: '100vw',
+    background: "#D9D9D9",
+    margin: '0',
+    padding: '0',
+    boxSizing: "border-box",
+    overflowX: 'hidden',
+  },
   headerWrapper: {
     position: 'relative',
     height: '60px',

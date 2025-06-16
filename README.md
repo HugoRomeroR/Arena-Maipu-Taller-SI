@@ -25,7 +25,7 @@ Para correr el proyecto en modo local usando Powershell (windows):
 
     ```bash
     cd frontend
-    npm install
+    npm install --legacy-peer-deps
     ```
 
 2. Ahora puedes ejecutar el script de desarrollo:
