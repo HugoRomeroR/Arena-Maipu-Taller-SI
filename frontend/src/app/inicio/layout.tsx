@@ -1,6 +1,10 @@
 'use client';
 
 import Link from "next/link";
+import Image from "next/image";
+import infoIcon from "../../../public/info-icon.svg";
+import { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 type leftContainerContent = {
   text: string;
@@ -11,6 +15,15 @@ type leftContainerContent = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+
+	// Consigue la información actualizada
+  const [informacion, setInformacion] = useState('Cargando información...');
+
+  useEffect(() => {
+    fetch('/api/loadMarkdown/informacion.md')
+      .then((res) => res.text())
+      .then(setInformacion);
+  }, []);
 
 	// Contenido de Servicios
 	const serviciosContent = [
@@ -56,8 +69,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   function boxHourContainer(hours: string) {
 		return (
 			<div style={styles.boxHourContainer}>
-				<p style={{ margin: '0px', paddingTop: '7px' }}>{hours}</p>
-				<p style={{ margin: '0px', paddingBottom: '7px' }}>Hrs</p>
+				<div style={{ margin: '0px', paddingTop: '7px' }}>{hours}</div>
+				<div style={{ margin: '0px', paddingBottom: '7px' }}>Hrs</div>
 			</div>
 		);
 	}
@@ -74,12 +87,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			<div style={styles.whiteCardBox}>
 
 				{ /* Titulo */ }
-				<p style={{ fontWeight: 'bold', margin: '2px 0px' }}>{title}</p>
+				<div style={{ fontWeight: 'bold', margin: '2px 0px' }}>{title}</div>
 				{ /* Linea */ }
 				<hr style={{ border: 'none', height: '1px', width: '100%', backgroundColor: '#AEAEAE' }} />
 				{ /* Contenido */ }
 				{content.map((item, index) => (
-					<p key={index} style={{ margin: '2px 0px' }}>
+					<div key={index} style={{ margin: '2px 0px' }}>
 						{item.hasRef ? (
 								<Link href={item.ref} style={{ width: '100%', color: 'black', textDecoration: 'none' }}>
 									{item.text} »
@@ -88,7 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 								item.text
 							)
 						}
-					</p>
+					</div>
 				))}
 				{ /* Boton */ }
 				<Link href={ref} style={{ ...styles.whiteCardBoxButton, backgroundColor: btnColor }} >
@@ -108,19 +121,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 					...styles.boxHourContainer,
 					background: "linear-gradient(to right, #F3A6CD 0%, #F3A6CD 80%, #D9D9D9 100%)",
 				}}>
-					<p style={{ margin: '0px', paddingTop: '7px' }}>Canchas</p>
-					<p style={{ margin: '0px', paddingBottom: '7px' }}>Disponibles</p>
+					<div style={{ margin: '0px', paddingTop: '7px' }}>Canchas</div>
+					<div style={{ margin: '0px', paddingBottom: '7px' }}>Disponibles</div>
 				</div>
 
 				<Link href="/canchas?tag=baby" style={styles.hoursLinkStyle}>
-					<p style={{ paddingLeft: '12px', paddingRight: '6px' }}>BABY</p>
+					<div style={{ paddingLeft: '12px', paddingRight: '6px', alignContent: 'center' }}>BABY</div>
 				</Link>
 				{boxHourContainer("09:00 - 10:00")}
 				{boxHourContainer("10:00 - 11:00")}
 				{boxHourContainer("11:00 - 12:00")}
 
 				<Link href="/canchas?tag=padel" style={styles.hoursLinkStyle}>
-					<p style={{ paddingLeft: '12px', paddingRight: '8px' }}>PADEL</p>
+					<div style={{ paddingLeft: '12px', paddingRight: '8px', alignContent: 'center' }}>PADEL</div>
 				</Link>
 				{boxHourContainer("09:00 - 10:00")}
 				{boxHourContainer("10:00 - 11:00")}
@@ -131,8 +144,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 						...styles.boxHourContainer,
 						background: "linear-gradient(to right, #D9D9D9 0%, #A6F095 20%, #A6F095 100%)",
 					}}>
-						<p style={{ margin: '0px', paddingTop: '7px' }}>Ver todas</p>
-						<p style={{ margin: '0px', paddingBottom: '7px' }}>las canchas</p>
+						<div style={{ margin: '0px', paddingTop: '7px' }}>Ver todas</div>
+						<div style={{ margin: '0px', paddingBottom: '7px' }}>las canchas</div>
 					</div>
 				</Link>
 
@@ -141,17 +154,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 			{ /* Cuerpo de la pagina */ }
 			<div style={styles.pageBodyWrapper}>
 				
-				<div style={{ display: 'flex', flexDirection: 'column', width: '200px', height: 'auto', gap: '40px' }}>
+				{ /* Sección izquierda: Cosas relevantes */ }
+				<div style={{ width: '200px', display: 'flex', flexDirection: 'column', height: 'auto', gap: '40px' }}>
 					{leftContainer('Servicios', serviciosContent, '#F09596', '/canchas', 'Ver más')}
 					{leftContainer('Únetenos', unetenosContent, '#A6F095', '/registrarse', 'Registrarse')}
 				</div>
 
+				{ /* Sección central: Artículos */ }
 				<div style={{ flexGrow: '1', height: 'auto' }}>
-					{children}
+					
 				</div>
 					
-				<div style={{ width: '200px', height: 'auto' }}>
-					
+				{ /* Sección derecha: Información y eventos */ }
+				<div style={{ width: '250px', height: 'auto' }}>
+					<div style={styles.whiteCardBox}>
+						<div style={{ display: 'flex', flexDirection: 'row', gap: '12px' }}>
+							<Image
+								src={infoIcon}
+								alt="Información"
+								style={styles.whiteCardImg}
+								draggable={false}
+							/>
+							<div style={{ fontWeight: 'bold', margin: '2px 0px' }}>Información:</div>
+						</div>
+						<div style={{ paddingRight: '20px' }}>
+							<ReactMarkdown>{informacion}</ReactMarkdown>
+						</div>
+					</div>
 				</div>
 
 			</div>
@@ -226,5 +255,10 @@ const styles: { [key: string]: React.CSSProperties } = {
 		width: 'auto',
 		marginTop: '8px',
     fontSize: '16px',
+  },
+	whiteCardImg: {
+    height: '24px',
+    width: '24px',
+    objectFit: 'contain',
   },
 }

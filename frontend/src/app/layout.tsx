@@ -54,9 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Image
                   src={amlogo}
                   alt="Arena Maipú Logo"
-                  style={{
-                    ...styles.logoImg,
-                  }}
+                  style={styles.logoImg}
                   draggable={false}
                 /> 
               </Link>
