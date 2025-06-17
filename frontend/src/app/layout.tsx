@@ -38,50 +38,49 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <title>Arena Maipú</title>
       <meta name="Arena Maipú" content="Reserva de canchas para recintos de Arena Maipú" />
-      <body id='body' className= 'scrollbarLayout' style={styles.pageBody}>
-        <div style={styles.headerWrapper}>
-          <div style={styles.headerBox}>
-            
-            <Link href="/inicio"
-              style={{
-                height: '100%',
-                objectFit: 'contain',
-                display: 'flex',
-                alignItems: 'center',
-                margin: '0px 24px',
-              }}>
-              <Image
-                src={amlogo}
-                alt="Arena Maipú Logo"
+      <body id='body' className='scrollbarLayout' style={styles.pageBody} >
+        <div style={{ ...(haveScroll ? { marginRight: '20px' } : {marginRight: '0px' })}}>
+          <div style={styles.headerWrapper}>
+            <div style={styles.headerBox}>
+              
+              <Link href="/inicio"
                 style={{
-                  ...styles.logoImg,
+                  height: '100%',
+                  objectFit: 'contain',
+                  display: 'flex',
+                  alignItems: 'center',
+                  margin: '0px 24px',
+                }}>
+                <Image
+                  src={amlogo}
+                  alt="Arena Maipú Logo"
+                  style={{
+                    ...styles.logoImg,
+                  }}
+                  draggable={false}
+                /> 
+              </Link>
+
+              <div style={styles.centerDiv}>
+                <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
+                <Link href="/canchas?emparejamiento=true" style={styles.centerDivText}> Buscar Equipo </Link>
+                <Link href="/nosotros" style={styles.centerDivText}> Nosotros </Link>
+              </div>
+
+              <Link
+                href="/iniciar%20sesion"
+                style={{
+                  ...styles.loginButton,
+                  ...(hoverLogin ? styles.loginButtonHover : {}),
                 }}
-                draggable={false}
-              /> 
-            </Link>
-
-            <div style={styles.centerDiv}>
-              <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
-              <Link href="/buscar-equipo" style={styles.centerDivText}> Buscar Equipo </Link>
-              <Link href="/nosotros" style={styles.centerDivText}> Nosotros </Link>
+                onMouseEnter={() => setHoverLogin(true)}
+                onMouseLeave={() => setHoverLogin(false)}
+              >
+                Iniciar Sesión
+              </Link>
+            
             </div>
-
-            <Link
-              href="/login"
-              style={{
-                ...styles.loginButton,
-                ...(hoverLogin ? styles.loginButtonHover : {}),
-                ...(haveScroll ? { marginRight: '48px' } : { marginRight: '24px' }),
-              }}
-              onMouseEnter={() => setHoverLogin(true)}
-              onMouseLeave={() => setHoverLogin(false)}
-            >
-              Iniciar Sesión
-            </Link>
-          
           </div>
-        </div>
-        <div style={{ ...(haveScroll ? { marginRight: '24px' } : {marginRight: '0px' }) }}>
           {children}
         </div>
       </body>
@@ -133,13 +132,15 @@ const styles: { [key: string]: React.CSSProperties } = {
     color: 'white',
     fontFamily: '"Helvetica Neue", sans-serif',
     textDecoration: 'none',
+    userSelect: 'none',
   },
   loginButton: {
-    backgroundColor: '#FF9D25',
+    backgroundColor: '#F09596',
     color: 'black',
     fontFamily: '"Helvetica Neue", sans-serif',
     fontWeight: 'bold',
     textDecoration: 'none',
+    userSelect: 'none',
     textAlign: 'center', // horizontal
     alignContent: 'center', // vertical
     border: 'none',
