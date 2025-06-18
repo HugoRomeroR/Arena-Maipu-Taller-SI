@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
 
               <Link
-                href="/iniciar%20sesion"
+                href="/iniciar_sesion"
                 style={{
                   ...styles.loginButton,
                   ...(hoverLogin ? styles.loginButtonHover : {}),

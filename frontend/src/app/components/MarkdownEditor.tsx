@@ -207,5 +207,7 @@ editorWrapper: {
 		resize: 'vertical',
 		overflowY: 'auto',
 		overflowX: 'hidden',
+    scrollbarWidth: 'none',        // Firefox
+    msOverflowStyle: 'none',       // IE/Edge
   },
 }
