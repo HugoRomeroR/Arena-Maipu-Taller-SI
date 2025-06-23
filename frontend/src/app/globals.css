@@ -20,3 +20,27 @@
 .editorWrapper::-webkit-scrollbar {
   display: none;
 }
+
+.background-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('../../public/placeholder-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  opacity: 0.5;
+  z-index: -1;
+}
+
+.background-img-color {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: gray;
+  z-index: -2;
+}

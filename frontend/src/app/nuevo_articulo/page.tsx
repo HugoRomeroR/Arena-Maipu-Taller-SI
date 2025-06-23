@@ -32,58 +32,101 @@ export default function nuevoArticulo() {
   };
 
   return (
-    <div style={{ margin: '0px 48px' }}>
-      <div style={{ padding: '24px', fontFamily: '"Helvetica Neue", sans-serif' }}>
-        <div style={{ height: '32px' }}></div>
-        <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '16px' }}>
-						Nuevo articulo
-					</div>
-        <label htmlFor="articleTitle" style={{ marginLeft: '16px' }}>Título del articulo</label>
+    <div style={styles.nuevoArticuloBody}>
+
+      { /* Título del artículo */ }
+      <div style={styles.whiteContainer}>
+        <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '16px' }}>
+          Creando un nuevo artículo:
+        </div>
+        <hr style={styles.nuevoArticuloLineStyle} />
+        <label htmlFor="articleTitle" style={{ margin: '0px 0px 16px 16px', display: 'block' }}>
+          Título del artículo
+        </label>
         <input
           type="text"
           id="articleTitle"
-          style={styles.editorWrapper}
+          style={styles.articleTitleBox}
           value={titleLayout}
           onChange={(e) => handleTitleChange(e.target.value)}
-          placeholder="Título del artículo"
+          placeholder="Escribe aquí el título de tu artículo..."
         />
-        <label htmlFor="articleContent" style={{ marginLeft: '16px' }}>Contenido del articulo</label>
-        <div id="articleContent" style={{ marginBottom: '16px' }}>
-          <MarkdownEditor onContentChange={setContent} />
-        </div>
-        <label htmlFor="articleLayout" style={{ marginLeft: '16px' }}>Disposición del articulo</label>
-        <div id="articleLayout" style={styles.articleLayoutWrapper}>
-          <LayoutCarousel layouts={PreviewLayouts({title: titleLayout})} onSelect={handleLayoutChange} />
-        </div>
-        <button onClick={handleSubmit} style={styles.publishButton}>Publicar</button>
       </div>
+
+      { /* Contenido del artículo */ }
+      <div style={styles.whiteContainer}>
+        <label htmlFor="articleContent" style={{ margin: '0px 0px 16px 16px', display: 'block' }}>
+          Contenido del artículo
+        </label>
+        <div id="articleContent" style={{ boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.4)', borderRadius: '16px' }}>
+          <MarkdownEditor
+            onContentChange={setContent}
+          />
+        </div>
+      </div>
+
+      { /* Disposición del artículo */ }
+      <div style={styles.whiteContainer}>
+        <label htmlFor="articleLayout" style={{ margin: '0px 0px 16px 16px', display: 'block' }}>
+          Disposición del artículo
+        </label>
+        <div id="articleLayout" style={styles.articleLayoutWrapper}>
+          <LayoutCarousel
+            layouts={PreviewLayouts({title: titleLayout})}
+            onSelect={handleLayoutChange} 
+          />
+        </div>
+      </div>
+
+      <button onClick={handleSubmit} style={styles.publishButton}>
+        Publicar
+      </button>
     </div>
   );
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
-editorWrapper: {
+  nuevoArticuloBody: {
+    fontFamily: '"Helvetica Neue", sans-serif',
+    margin: '48px',
+    padding: '0px 48px',
+    borderRadius: '16px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  },
+  whiteContainer: {
+    padding: '18px',
+    backgroundColor: 'white',
+    borderRadius: '16px' 
+  },
+  nuevoArticuloLineStyle: {
+    border: 'none',
+    height: '2px',
+    width: '100%',
+    backgroundColor: '#AEAEAE',
+    margin: '16px 0px',
+  },
+  articleTitleBox: {
     position: "relative",
     height: "48px",
-        width: "100%",
+    width: "100%",
     fontFamily: '"Helvetica Neue", sans-serif',
-        background: "white",
-        marginBottom: '24px',
-        paddingLeft: '24px',
+    background: "white",
+    paddingLeft: '24px',
     paddingRight: '24px',
-        boxSizing: "border-box",
-        borderRadius: '24px',
-    border: '0px solid',
-        overflow: 'hidden',
+    boxSizing: "border-box",
+    borderRadius: '24px',
+    border: 'none',
+    boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.4)',
+    overflow: 'hidden',
   },
   articleLayoutWrapper: {
     borderRadius: '24px',
     padding: '24px 0px',
-    backgroundColor: 'white',
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
-    marginBottom: '16px',
     overflow: 'hidden',
   },
   publishButton: {

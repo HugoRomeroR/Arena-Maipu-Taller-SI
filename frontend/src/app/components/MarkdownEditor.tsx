@@ -122,7 +122,7 @@ export default function MarkdownEditor({ onContentChange }: MarkdownEditorProps)
 		const handleModeChange = (isPreview: boolean) => {
 			const customButtons = document.querySelectorAll('.custom-button') as NodeListOf<HTMLElement>;
 			customButtons.forEach((button) => {
-				button.style.color = isPreview ? 'lightgray' : 'black';
+				button.style.color = isPreview ? 'lightgray' : '#545454';
 			});
 		};
 

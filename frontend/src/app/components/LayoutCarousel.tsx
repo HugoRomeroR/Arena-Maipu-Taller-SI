@@ -48,7 +48,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: 'auto',
     overflow: 'hidden',
     position: 'relative',
-    boxShadow: '0px 0px 16px rgba(0, 0, 0, 0.4)',
+    boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.4)',
     borderRadius: '16px',
   },
   button: {
