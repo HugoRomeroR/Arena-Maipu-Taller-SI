@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import { signIn } from "next-auth/react"
 import Image from "next/image"
 import amlogo from "../../../public/amlogo.png"
 import passwordVisible from "../../../public/open-eye.png"
@@ -8,6 +10,8 @@ import passwordInvisible from "../../../public/closed-eye.png"
 import validator from 'validator'
 
 export default function Login() {
+  const searchParams = useSearchParams();
+  const router = useRouter()
   const [form, setForm] = useState({
     email: '',
     password: ''
@@ -15,6 +19,11 @@ export default function Login() {
   const [isPasswordShown, setIsPasswordShown] = useState(false)
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
+  
+  const getParams = () => {
+    const registerResult = searchParams.get('registro-exitoso') === 'true'
+    return registerResult
+  }
 
   // Gestiona cambios en el formulario y quita errores tras cambio
   const handleChange = (field: string, value: string) => {
@@ -23,13 +32,13 @@ export default function Login() {
   }
 
   // Intento de iniciar sesión
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     // Validadores
     const newErrors: { [key: string]: string } = {}
 
     if (!form.email.trim()) {
-      newErrors.email = 'Ingrese el email asociado a su cuenta'
+      newErrors.email = 'Ingrese el correo asociado a su cuenta'
     } else if (!validator.isEmail(form.email.trim())) {
       newErrors.email = 'El formato de correo ingresado es incorrecto'
     }
@@ -43,12 +52,21 @@ export default function Login() {
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    // Aqui deberia ir la llamada a services
     setLoading(true)
-    setTimeout(() => {
-      alert('Login simulado')
-      setLoading(false)
-    }, 1000)
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: form.email,
+      password: form.password,
+    });
+
+    if (res?.ok) {
+      router.replace('/inicio');
+    } else {
+      newErrors.email = 'Correo o Contraseña incorrecto'
+      newErrors.password = 'Correo o Contraseña incorrecto'
+      setErrors(newErrors)
+    }
+    setLoading(false);
   }
 
   // Renderiza un campo con label, input field, type
@@ -92,6 +110,14 @@ export default function Login() {
       <div className="background-img" />
       <div className="background-img-color" />
       <div style={styles.whiteBoxWrapper}>
+        {
+            getParams() &&
+            <div style={styles.approved}>
+              <div style= {{ fontSize: '48px' }}>✔</div>
+              <div>¡Su cuenta ha sido confirmada con exito!</div>
+              <div>Ahora puede iniciar sesión a su cuenta.</div>
+            </div>
+          }
         <form onSubmit={handleSubmit} style={styles.whiteBox}>
           <div style={styles.logoImageContainer}>
             <Image src={amlogo} alt="Logo" style={styles.logoImg} draggable={false} />
@@ -113,7 +139,7 @@ export default function Login() {
           </p>
           <p style={styles.footerText}>
             ¿Olvidaste tu contraseña?{' '}
-            <a href="/recuperar_cuenta" style={styles.link}>
+            <a href="/recuperar-cuenta" style={styles.link}>
               Recuperar cuenta
             </a>
           </p>
@@ -170,6 +196,25 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontSize: '16px',
     fontWeight: 'bold',
     marginBottom: '0px',
+  },
+  approved: {
+    display: 'flex',
+		flexDirection: 'column',
+		color: '#3f9b0b',
+    backgroundColor: 'rgba(255, 255, 255, 0.65)',
+		borderRadius: '20px',
+    border: 'none',
+    fontFamily: '"Helvetica Neue", sans-serif',
+    fontSize: '20px',
+    textAlign: 'center',
+		justifyContent: 'center',
+		alignItems: 'center',
+    width: '700px',
+    padding: '48px 0px',
+    gap: '4px',
+    marginTop: '4px',
+    marginBottom: '4px',
+    fontWeight: 'bold',
   },
   fieldsContainer: {
     display: 'flex',

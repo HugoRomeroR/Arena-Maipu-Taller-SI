@@ -5,21 +5,24 @@ import Image from "next/image";
 import infoIcon from "../../../public/info-icon.svg";
 import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { useSession } from "next-auth/react";
 
 type leftContainerContent = {
   text: string;
-	hasRef: boolean;
+  hasRef: boolean;
   ref: string;
   hasImage: boolean;
   imageUrl: string;
 };
 
 export default function Inicio() {
+	const { data: session, status } = useSession();
 
 	// Consigue la información actualizada
   const [informacion, setInformacion] = useState('Cargando información...');
 
   useEffect(() => {
+	// Esto debe estar como service para mayor modularidad
     fetch('/api/loadMarkdown/informacion.md')
       .then((res) => res.text())
       .then(setInformacion);
@@ -157,7 +160,7 @@ export default function Inicio() {
 				{ /* Sección izquierda: Cosas relevantes */ }
 				<div style={{ width: '200px', display: 'flex', flexDirection: 'column', height: 'auto', gap: '40px' }}>
 					{leftContainer('Servicios', serviciosContent, '#F09596', '/canchas', 'Ver más')}
-					{leftContainer('Únetenos', unetenosContent, '#A6F095', '/registrarse', 'Registrarse')}
+					{status !== "authenticated" && leftContainer('Únetenos', unetenosContent, '#A6F095', '/registrarse', 'Registrarse')}
 				</div>
 
 				{ /* Sección central: Artículos */ }

@@ -147,7 +147,7 @@ export default function Register() {
 
           <p style={styles.footerText}>
             ¿Ya tienes cuenta?{' '}
-            <a href="/iniciar_sesion" style={styles.link}>
+            <a href="/iniciar-sesion" style={styles.link}>
               Iniciar Sesión
             </a>
           </p>

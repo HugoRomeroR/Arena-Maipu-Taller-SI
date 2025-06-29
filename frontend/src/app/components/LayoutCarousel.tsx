@@ -5,6 +5,7 @@ interface LayoutCarouselProps {
   onSelect?: (index: number) => void;
 }
 
+// Renderiza un carrusel de previsualizaciones de layouts para los articulos
 export default function LayoutCarousel({ layouts, onSelect }: LayoutCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
 

@@ -1,87 +1,57 @@
-'use client';
-
 import Image from "next/image";
+import SessionProviderWrapper from './components/SessionProviderWrapper'
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/app/lib/auth"
+import ClientLayoutWrapper from "./components/ClientLayoutWrapper";
 import amlogo from "../../public/amlogo.png";
 import Link from "next/link";
-import React, { useState, useEffect, useRef } from "react";
+import LoginButton from "./components/LoginButton";
 import './globals.css';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Estado para manejar el hover del botón de inicio de sesión
-  const [hoverLogin, setHoverLogin] = useState(false)
-
-  // Estado para verificar si hay scroll activo
-  const [haveScroll, setHaveScroll] = useState(false);
-
-  // Comprobando scroll tras redimensionar la ventana
-  useEffect(() => {
-    const checkScroll = () => {
-      const body = document.getElementById('body');
-      if (body instanceof HTMLElement) {
-        const isScrollActive = body.scrollHeight > body.clientHeight;
-        setHaveScroll(isScrollActive);
-      }
-    };
-    
-    // Se ejecutará cada vez que la ventana se redimensione
-    window.addEventListener('resize', checkScroll);
-
-    // Llamar a la función al cargar el componente para verificar el scroll inicial
-    setTimeout(checkScroll, 1000);
-
-    return () => {
-      window.removeEventListener('resize', checkScroll);
-    };
-  }, []);
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const session = await getServerSession(authOptions)
 
   return (
     <html lang="es">
-      <title>Arena Maipú</title>
-      <meta name="Arena Maipú" content="Reserva de canchas para recintos de Arena Maipú" />
-      <body id='body' className='scrollbarLayout' style={styles.pageBody} >
-        <div style={{ ...(haveScroll ? { marginRight: '20px' } : {marginRight: '0px' })}}>
-          <div style={styles.headerWrapper}>
-            <div style={styles.headerBox}>
+      <SessionProviderWrapper session={session}>
+        <title>Arena Maipú</title>
+        <meta name="Arena Maipú" content="Reserva de canchas para recintos de Arena Maipú" />
+        <body id='body' className='scrollbarLayout' style={styles.pageBody} >
+          <ClientLayoutWrapper>
+            <div style={styles.headerWrapper}>
+              <div style={styles.headerBox}>
+                
+                <Link href="/inicio"
+                  style={{
+                    height: '100%',
+                    objectFit: 'contain',
+                    display: 'flex',
+                    alignItems: 'center',
+                    margin: '0px 24px',
+                  }}>
+                  <Image
+                    src={amlogo}
+                    alt="Arena Maipú Logo"
+                    style={styles.logoImg}
+                    draggable={false}
+                  /> 
+                </Link>
+
+                <div style={styles.centerDiv}>
+                  <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
+                  <Link href="/canchas?emparejamiento=true" style={styles.centerDivText}> Buscar Equipo </Link>
+                  <Link href="/nosotros" style={styles.centerDivText}> Nosotros </Link>
+                  <Link href="/develop" style={styles.centerDivText}> Develop </Link>
+                </div>
+
+                <LoginButton />
               
-              <Link href="/inicio"
-                style={{
-                  height: '100%',
-                  objectFit: 'contain',
-                  display: 'flex',
-                  alignItems: 'center',
-                  margin: '0px 24px',
-                }}>
-                <Image
-                  src={amlogo}
-                  alt="Arena Maipú Logo"
-                  style={styles.logoImg}
-                  draggable={false}
-                /> 
-              </Link>
-
-              <div style={styles.centerDiv}>
-                <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
-                <Link href="/canchas?emparejamiento=true" style={styles.centerDivText}> Buscar Equipo </Link>
-                <Link href="/nosotros" style={styles.centerDivText}> Nosotros </Link>
               </div>
-
-              <Link
-                href="/iniciar_sesion"
-                style={{
-                  ...styles.loginButton,
-                  ...(hoverLogin ? styles.loginButtonHover : {}),
-                }}
-                onMouseEnter={() => setHoverLogin(true)}
-                onMouseLeave={() => setHoverLogin(false)}
-              >
-                Iniciar Sesión
-              </Link>
-            
             </div>
-          </div>
-          {children}
-        </div>
-      </body>
+            {children}
+          </ClientLayoutWrapper>
+        </body>
+      </SessionProviderWrapper>
     </html>
   );
 }
@@ -102,13 +72,11 @@ const styles: { [key: string]: React.CSSProperties } = {
     position: 'relative',
     height: '60px',
     width: '100%',
-    overflow: 'hidden',
   },
   headerBox: {
     height: '100%',
     width: '100%',
     backgroundColor: 'black',
-    overflow: 'hidden',
     display: 'flex',
     flexDirection: 'row',
     alignContent: 'center',
@@ -120,7 +88,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   },
   centerDiv: {
     display: 'flex',
-    flexGrow: '1', // se estira para ocupar el espacio restante
+    flexGrow: '1',
     padding: '2px 24px',
     height: '100%',
     alignItems: 'center',
@@ -139,8 +107,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     fontWeight: 'bold',
     textDecoration: 'none',
     userSelect: 'none',
-    textAlign: 'center', // horizontal
-    alignContent: 'center', // vertical
+    textAlign: 'center',
+    alignContent: 'center',
     border: 'none',
     borderRadius: '24px',
     margin: '12px 24px',
