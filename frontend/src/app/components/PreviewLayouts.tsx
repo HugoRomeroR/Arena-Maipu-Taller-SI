@@ -54,7 +54,7 @@ export const PreviewLayouts = ({ title }: { title: string }): React.ReactNode[] 
 const layouts = ({ title }: { title: string }): React.ReactNode[] => [
   // 1. Imagen / Título / Fecha
   (
-    <div style={styles.previewBoxLayout}>
+    <div key={1} style={styles.previewBoxLayout}>
       <div style={styles.imageLayout}>
         <div style={styles.imageBgLayout}></div>
       </div>
@@ -65,7 +65,7 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
 
   // 2. Imagen a la izquierda / Título centrado / Fecha abajo
   (
-    <div style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
+    <div key={2} style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
       <div style={{ ...styles.imageLayout, flexBasis: '65%', flexShrink: 0 }}>
         <div style={styles.imageBgLayout}></div>
       </div>
@@ -88,7 +88,7 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
 
   // 3. Título centrado / Fecha abajo / Imagen a la derecha
   (
-    <div style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
+    <div key={3} style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
       <div style={{ display: 'flex', flexDirection: 'column', flexBasis: '40%' }}>
         <div
           style={{
@@ -111,7 +111,7 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
 
   // 4. Título / Imagen / Fecha en columna
   (
-    <div style={styles.previewBoxLayout}>
+    <div key={4} style={styles.previewBoxLayout}>
       <div style={{ ...styles.titleLayout, textAlign: 'center' }}>{title}</div>
       <div style={styles.imageLayout}>
         <div style={styles.imageBgLayout}></div>

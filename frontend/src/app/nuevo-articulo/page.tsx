@@ -7,7 +7,7 @@ import { PreviewLayouts } from '../components/PreviewLayouts';
 
 const MarkdownEditor = dynamic(() => import('../components/MarkdownEditor'), { ssr: false });
 
-export default function nuevoArticulo() {
+export default function NuevoArticulo() {
   const [titleLayout, setTitle] = useState('');
   const [articleLayout, setArticleLayout] = useState(0);
   const [content, setContent] = useState('');

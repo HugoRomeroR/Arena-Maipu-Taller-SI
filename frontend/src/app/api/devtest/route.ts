@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const token = generateVerificationToken({ email, username, displayname }, randomSeed);
 
     return NextResponse.json({ token });
-  } catch (err) {
+  } catch {
     return NextResponse.json({ error: 'Error generando token' }, { status: 500 });
   }
 }

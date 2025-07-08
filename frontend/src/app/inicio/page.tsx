@@ -16,7 +16,7 @@ type leftContainerContent = {
 };
 
 export default function Inicio() {
-	const { data: session, status } = useSession();
+	const { status } = useSession();
 
 	// Consigue la información actualizada
   const [informacion, setInformacion] = useState('Cargando información...');

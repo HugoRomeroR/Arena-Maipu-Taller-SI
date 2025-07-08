@@ -3,14 +3,7 @@
 
 import { signOut, useSession } from "next-auth/react";
 import { useState } from "react";
-import { generateVerificationToken } from "../lib/generateVerificationToken";
 import { useRouter } from "next/navigation";
-
-interface Data {
-  email: 'string',
-  username: 'string',
-  displayname: 'string',
-}
 
 export default function DevelopTestPage() {
   const { data: session, status } = useSession();

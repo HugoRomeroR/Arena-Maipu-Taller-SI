@@ -16,6 +16,7 @@ interface MarkdownEditorProps {
 }
 
 export default function MarkdownEditor({ onContentChange }: MarkdownEditorProps) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const editorRef = useRef<any>(null);
 
 	// Efecto para manejar los cambios en el contenido del editor
@@ -34,7 +35,7 @@ export default function MarkdownEditor({ onContentChange }: MarkdownEditorProps)
     return () => {
       instance.off('change', handleChange);
     };
-  }, []);
+  }, [onContentChange]);
 
 	// Efecto para agregar comandos personalizados de alineación de texto
 	useEffect(() => {
@@ -138,8 +139,6 @@ export default function MarkdownEditor({ onContentChange }: MarkdownEditorProps)
 	// Esta parte del código se encarga de ocultar la pestaña de subir archivo
 	// y mostrar solo la pestaña de URL.
   useEffect(() => {
-    const editorContainer = document.querySelector('.toastui-editor-toolbar');
-
 		// Logica principal
     const handleImagePopup = () => {
       setTimeout(() => {

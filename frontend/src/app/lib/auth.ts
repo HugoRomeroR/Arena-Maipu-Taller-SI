@@ -1,7 +1,7 @@
 // app/lib/auth.ts
 import CredentialsProvider from "next-auth/providers/credentials"
 import { NextAuthOptions } from "next-auth"
-import pool from './db';
+import db from './db';
 import bcrypt from 'bcryptjs';
 
 // Configura NextAuth.js con el proveedor de credenciales.
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) return null
 
         try {
-          const result = await pool.query(
+          const result = await db.query(
             'SELECT * FROM usuario WHERE LOWER(email) = LOWER($1)',
             [credentials.email]
           );
