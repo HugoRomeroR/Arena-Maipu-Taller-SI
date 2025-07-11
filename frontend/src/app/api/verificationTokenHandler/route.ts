@@ -92,7 +92,7 @@ export async function POST(req: Request) {
             VALUES ($1, $2, $3)`,
             [publicData.randomId, publicData, privateData]
           );
-          await sendVerificationEmail('hromeror@utem.cl', `http://localhost:3000/verificar-email/${randomSeed}?token=${token}`, privateData.type);
+          await sendVerificationEmail(publicData.email, `${process.env.NEXT_PUBLIC_DOMAIN_URL}/verificar-email/${randomSeed}?token=${token}`, privateData.type);
           return NextResponse.json({ status: 'ok' });
       } catch {
         return NextResponse.json({ status: 'error', error: 'Error al guardar los datos.' }, { status: 400 });
