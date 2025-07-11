@@ -2,47 +2,9 @@
 'use client'
 
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 export default function DevelopTestPage() {
   const { data: session, status } = useSession();
-  const [token, setToken] = useState<string | null>("");
-  const router = useRouter();
-
-  const cuentaPrueba = {
-    email: 'hromeror@utem.cl',
-    username: 'Hugo',
-    displayname: 'Jinja',
-  }
-  const randomSeed = "thisisarandomseed"
-
-  async function generateToken(
-    email: string,
-    username: string,
-    displayname: string,
-    randomSeed: string
-  ): Promise<string | null> {
-    try {
-      const res = await fetch('/api/devtest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, username, displayname, randomSeed }),
-      });
-
-      const json = await res.json();
-
-      if (!res.ok) {
-        console.error('Error al generar el token:', json.error);
-        return null;
-      }
-
-      return json.token;
-    } catch (err) {
-      console.error('Error en la petición:', err);
-      return null;
-    }
-  }
 
   return (
     <div style={{ padding: "2rem", fontFamily: "Arial, sans-serif" }}>
@@ -59,7 +21,8 @@ export default function DevelopTestPage() {
           <p> <strong>• Identificacion: </strong> {session.user?.username} </p>
           <p> <strong>• Nombre: </strong> {session.user?.displayname} </p>
           <p> <strong>• Rol: </strong> {session.user?.role} </p>
-          <p> <strong>• Cuenta creada en: </strong> {session.user?.date} </p>
+          <p> <strong>• Cuenta creada en: </strong> {session.user?.createdAt} </p>
+          <p> <strong>• Ultima conexion en: </strong> {session.user?.lastLogin} </p>
           <button onClick={() => signOut()} style={{ marginTop: "1rem" }}>
             Cerrar sesión
           </button>
@@ -67,19 +30,6 @@ export default function DevelopTestPage() {
       ) : (
         <>
           <h3>❌ Aun no haz iniciado sesion</h3>
-          <button
-            onClick={async () => {
-              const token = await generateToken(cuentaPrueba.email, cuentaPrueba.username, cuentaPrueba.displayname, randomSeed);
-              setToken(token);
-            }}
-            style={{ marginTop: "1rem" }}
-          >
-            Generar token
-          </button>
-          <br></br><br></br><br></br>
-          <a onClick={() => router.push(`http://localhost:3000/verificar-email/${randomSeed}?token=${token}`)}>
-            http://localhost:3000/verificar-email/{randomSeed}?token={token}
-          </a>
         </>
       )}
     </div>

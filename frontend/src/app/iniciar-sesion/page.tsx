@@ -111,13 +111,13 @@ export default function Login() {
       <div className="background-img-color" />
       <div style={styles.whiteBoxWrapper}>
         {
-            getParams() &&
-            <div style={styles.approved}>
-              <div style= {{ fontSize: '48px' }}>✔</div>
-              <div>¡Su cuenta ha sido confirmada con exito!</div>
-              <div>Ahora puede iniciar sesión a su cuenta.</div>
-            </div>
-          }
+          getParams() &&
+          <div style={styles.approved}>
+            <div style= {{ fontSize: '48px' }}>✔</div>
+            <div>¡Su cuenta ha sido confirmada con exito!</div>
+            <div>Ahora puede iniciar sesión a su cuenta.</div>
+          </div>
+        }
         <form onSubmit={handleSubmit} style={styles.whiteBox}>
           <div style={styles.logoImageContainer}>
             <Image src={amlogo} alt="Logo" style={styles.logoImg} draggable={false} />

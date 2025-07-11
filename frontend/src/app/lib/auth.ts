@@ -12,11 +12,15 @@ import bcrypt from 'bcryptjs';
 // {
 //   user: {
 //     id: "1",
+//     rut_usuario: "12.345.678-9",
+//     email: "usuario@correo.com",
+//     telefono: "+12 3 4567 2389",
 //     username: "usuario10ejemplo",
 //     displayname: "Usuario De Ejemplo",
-//     email: "usuario@correo.com",
 //     role: "admin",
-//     date: "20/02/2024",
+//     createdAt: "2023-10-01T12:00:00.000Z",
+//     lastLogin: "2023-10-01T12:00:00.000Z",
+//     updatedAt: "2023-10-01T12:00:00.000Z"
 //   },
 //   expires: "2025-07-01T00:00:00.000Z"
 // }
@@ -49,13 +53,23 @@ export const authOptions: NextAuthOptions = {
           const isValid = await bcrypt.compare(credentials.password, user.contrasena);
           if (!isValid) return null;
 
+          // Actualiza la última conexión
+          await db.query(
+            'UPDATE usuario SET fecha_ultima_conexion = NOW() WHERE id_usuario = $1',
+            [user.id_usuario]
+          );
+
           return {
             id: user.id_usuario.toString(),
+            rut_usuario: user.rut_usuario,
+            email: user.email,
+            telefono: user.telefono,
             username: user.nombre_unico,
             displayname: user.nombre_publico,
-            email: user.email,
             role: user.rol_usuario,
-            date: user.fecha_creacion,
+            createdAt: user.fecha_creacion,
+            lastLogin: new Date().toISOString(),
+            updatedAt: user.fecha_ultima_modificacion,
           };
 
         } catch (err) {
@@ -84,22 +98,30 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.rut_usuario = user.rut_usuario
+        token.email = user.email
+        token.telefono = user.telefono
         token.username = user.username
         token.displayname = user.displayname
-        token.email = user.email
         token.role = user.role
-        token.date = user.date
+        token.createdAt = user.createdAt
+        token.lastLogin = user.lastLogin
+        token.updatedAt = user.updatedAt
       }
       return token
     },
     async session({ session, token }) {
       if (token && session.user) {
         session.user.id = token.id
+        session.user.rut_usuario = token.rut_usuario
+        session.user.email = token.email
+        session.user.telefono = token.telefono
         session.user.username = token.username
         session.user.displayname = token.displayname
-        session.user.email = token.email
         session.user.role = token.role
-        session.user.date = token.date
+        session.user.createdAt = token.createdAt
+        session.user.lastLogin = token.lastLogin
+        session.user.updatedAt = token.updatedAt
       }
       return session
     },

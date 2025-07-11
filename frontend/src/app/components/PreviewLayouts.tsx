@@ -1,52 +1,5 @@
 import imageLayout from "../../../public/placeholder-bg.jpg";
 
-const styles: { [key: string]: React.CSSProperties } = {
-  containerLayout: {
-    display: 'flex',
-    gap: '8px',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-  },
-  previewBoxLayout: {
-    width: '800px',
-    height: '300px',
-    border: 'none',
-    borderRadius: '16px',
-    overflow: 'hidden',
-    position: 'relative',
-    fontFamily: '"Helvetica Neue", sans-serif',
-    color: 'white',
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  imageLayout: {
-    flexBasis: '100%',
-    padding: '6px',
-  },
-  imageBgLayout: {
-    width: '100%',
-    height: '100%',
-    border: 'none',
-    borderRadius: '16px',
-    backgroundImage: `url(${imageLayout.src})`,
-    backgroundSize: 'cover',
-  },
-  titleLayout: {
-    color: 'black',
-    fontSize: '20px',
-    fontWeight: 'bold',
-    padding: '4px',
-    textAlign: 'left',
-  },
-  dateLayout: {
-    color: '#4d4d4d',
-    fontSize: '12px',
-    padding: '4px',
-    textAlign: 'left',
-  },
-};
-
 export const PreviewLayouts = ({ title }: { title: string }): React.ReactNode[] => {
     return (title === '') ? layouts({ title: '¡Mi Nuevo Artículo!' }) : layouts({ title: title });
 }
@@ -120,3 +73,50 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
     </div>
   ),
 ];
+
+const styles: { [key: string]: React.CSSProperties } = {
+  containerLayout: {
+    display: 'flex',
+    gap: '8px',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  previewBoxLayout: {
+    width: '800px',
+    height: '300px',
+    border: 'none',
+    borderRadius: '16px',
+    overflow: 'hidden',
+    position: 'relative',
+    fontFamily: '"Helvetica Neue", sans-serif',
+    color: 'white',
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  imageLayout: {
+    flexBasis: '100%',
+    padding: '6px',
+  },
+  imageBgLayout: {
+    width: '100%',
+    height: '100%',
+    border: 'none',
+    borderRadius: '16px',
+    backgroundImage: `url(${imageLayout.src})`,
+    backgroundSize: 'cover',
+  },
+  titleLayout: {
+    color: 'black',
+    fontSize: '20px',
+    fontWeight: 'bold',
+    padding: '4px',
+    textAlign: 'left',
+  },
+  dateLayout: {
+    color: '#4d4d4d',
+    fontSize: '12px',
+    padding: '4px',
+    textAlign: 'left',
+  },
+};
