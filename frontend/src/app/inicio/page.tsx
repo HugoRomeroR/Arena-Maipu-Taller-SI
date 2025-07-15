@@ -3,9 +3,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import infoIcon from "../../../public/info-icon.svg";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 import { useSession } from "next-auth/react";
+import { generateArticleLayout } from "../components/ArticleLayouts";
 
 type leftContainerContent = {
   text: string;
@@ -15,18 +18,79 @@ type leftContainerContent = {
   imageUrl: string;
 };
 
+interface PostInfo {
+	id_articulo: string;
+	layout: number;
+	titulo: string;
+	imagen_url: string;
+	slug: string;
+	fecha_creacion: string;
+}
+
 export default function Inicio() {
+	const searchParams = useSearchParams();
 	const { status } = useSession();
+	const router = useRouter();
 
 	// Consigue la información actualizada
-  const [informacion, setInformacion] = useState('Cargando información...');
+  	const [informacion, setInformacion] = useState('Cargando información...');
 
-  useEffect(() => {
-	// Esto debe estar como service para mayor modularidad
-    fetch('/api/loadMarkdown/informacion.md')
-      .then((res) => res.text())
-      .then(setInformacion);
-  }, []);
+	// Estado para artículos
+	const [currentPage, setCurrentPage] = useState<number>(Number(searchParams.get('pagina') || '1'));
+	const [posts, setPosts] = useState([]);
+  	const [totalPages, setTotalPages] = useState(1);
+	const inputRef = useRef<HTMLInputElement>(null);
+
+	// Consulta los articulos de la pagina actual
+	useEffect(() => {
+		async function consultarArticulos() {
+			const res = await fetch('/api/getArticles', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ page: currentPage }),
+			});
+			const data = await res.json();
+			setPosts(data.posts || []);
+			setTotalPages(data.totalPages || 1);
+		}
+
+		consultarArticulos();
+	}, [currentPage]);
+
+	// Consigue la informacion
+	useEffect(() => {
+		async function getInformacion() {
+			const res = await fetch('/api/getArticleContentBySlug', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ slug: 'informacion' }),
+			});
+			const data = await res.json();
+			if (data.status === 'ok') {
+				setInformacion(data.contenido || 'Error al obtener la informacion');
+			} else {
+				setInformacion('Error al obtener la informacion');
+			}
+		}
+
+		getInformacion();
+	}, []);
+
+	// Navegar hacia la pagina
+	const handleBuscar = () => {
+		const value = Number(inputRef.current?.value);
+		if (value > 0 && !isNaN(value)) {
+			setCurrentPage(value);
+			router.push(`/inicio?pagina=${value}`);
+		}
+	};
+
+	// Navegar hacia la pagina con Enter
+	const handleEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+		if (e.key === 'Enter') {
+			handleBuscar();
+		}
+	}
 
 	// Contenido de Servicios
 	const serviciosContent = [
@@ -68,8 +132,37 @@ export default function Inicio() {
 		}
 	]
 
+	// Contenido de Clubes
+	const clubesContent = [
+		{
+			text: 'Club Amarillo',
+			hasRef: true,
+			ref: '/inicio/blog/club-amarillo',
+			hasImage: true,
+			imageUrl: 'https://i.imgur.com/oVWodlR.png'
+		},{
+			text: 'Club Dorado',
+			hasRef: true,
+			ref: '/inicio/blog/club-dorado',
+			hasImage: true,
+			imageUrl: 'https://i.imgur.com/wYec3or.png'
+		},{
+			text: 'Club Azul',
+			hasRef: true,
+			ref: '/inicio/blog/club-azul',
+			hasImage: true,
+			imageUrl: 'https://i.imgur.com/FLWCpFY.png'
+		},{
+			text: 'Club Negro',
+			hasRef: true,
+			ref: '/inicio/blog/club-negro',
+			hasImage: true,
+			imageUrl: 'https://i.imgur.com/dlTjhwM.png'
+		}
+	]
+
 	// Contenedor con estilo para horas comunes
-  function boxHourContainer(hours: string) {
+  	function boxHourContainer(hours: string) {
 		return (
 			<div style={styles.boxHourContainer}>
 				<div style={{ margin: '0px', paddingTop: '7px' }}>{hours}</div>
@@ -79,7 +172,7 @@ export default function Inicio() {
 	}
 
 	// Contenedor para información personalizada (Sección izquierda)
-  function leftContainer(
+  	function leftContainer(
 			title: string,
 			content: leftContainerContent[],
 			btnColor: string,
@@ -96,12 +189,20 @@ export default function Inicio() {
 				{ /* Contenido */ }
 				{content.map((item, index) => (
 					<div key={index} style={{ margin: '2px 0px' }}>
+						{item.hasImage &&
+							// eslint-disable-next-line @next/next/no-img-element
+							<img
+								src={ item.imageUrl }
+								style={{ width: '16px', height: '16px', objectFit: 'contain' }}
+								alt="Imagen"
+							/>
+						}
 						{item.hasRef ? (
 								<Link href={item.ref} style={{ width: '100%', color: 'black', textDecoration: 'none' }}>
-									{item.text} »
+									<span> {item.text} »</span>
 								</Link>
 							):(
-								item.text
+								<span> {item.text}</span>
 							)
 						}
 					</div>
@@ -114,7 +215,7 @@ export default function Inicio() {
 		);
 	}
 
-  return (
+  	return (
 		<div className= 'scrollbarLayout'>
 
 			{ /* Barra superior de canchas disponibles */ }
@@ -161,11 +262,66 @@ export default function Inicio() {
 				<div style={{ width: '200px', display: 'flex', flexDirection: 'column', height: 'auto', gap: '40px' }}>
 					{leftContainer('Servicios', serviciosContent, '#F09596', '/canchas', 'Ver más')}
 					{status !== "authenticated" && leftContainer('Únetenos', unetenosContent, '#A6F095', '/registrarse', 'Registrarse')}
+					{leftContainer('Clubs', clubesContent, '#F09596', '/inicio/blog/clubes', 'Saber más')}
 				</div>
 
 				{ /* Sección central: Artículos */ }
-				<div style={{ flexGrow: '1', height: 'auto' }}>
-					
+				<div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flexGrow: '1', height: 'auto' }}>
+					{posts.length > 0 ? (
+						posts.map((post: PostInfo) => (
+							<div key={post.id_articulo}>
+								{generateArticleLayout(
+									post.layout,
+									post.titulo,
+									post.imagen_url,
+									post.slug,
+									post.fecha_creacion
+								)}
+							</div>
+						))
+					) : (
+						<div>No hay artículos disponibles.</div>
+					)}
+					<div style={styles.panelNavegacion}>
+						<a href={`/inicio?pagina=${Math.max(1, currentPage - 1)}`} style={styles.botonNavegacion}>← Atrás</a>
+
+						{Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+							<a
+							key={num}
+							href={`/inicio?pagina=${num}`}
+							style={{
+								padding: '0.5rem 1rem',
+								backgroundColor: currentPage === num ? '#F09596' : '#f0f0f0',
+								border: '1px solid #ccc',
+								borderRadius: '4px',
+								color: currentPage === num ? 'black' : '#333',
+								textDecoration: 'none',
+								fontFamily: '"Verdana", sans-serif',
+							}}
+							>
+							{num}
+							</a>
+						))}
+
+						<a href={`/inicio?pagina=${Math.min(totalPages, currentPage + 1)}`} style={styles.botonNavegacion}>Siguiente →</a>
+
+						<div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+							<input
+								type="number"
+								min="1"
+								placeholder="Buscar página"
+								onKeyDown={handleEnter}
+								ref={inputRef}
+								style={styles.buscadorNavegacion}
+							/>
+							<button
+								onClick={handleBuscar}
+								style={styles.buscadorBotonNavegacion}
+							>
+								Ir
+							</button>
+						</div>
+					</div>
 				</div>
 					
 				{ /* Sección derecha: Información y eventos */ }
@@ -180,15 +336,17 @@ export default function Inicio() {
 							/>
 							<div style={{ fontWeight: 'bold', margin: '2px 0px' }}>Información:</div>
 						</div>
-						<div style={{ paddingRight: '20px' }}>
-							<ReactMarkdown>{informacion}</ReactMarkdown>
+						<div style={{ paddingRight: '20px', overflowX: 'hidden' }}>
+							<ReactMarkdown rehypePlugins={[rehypeRaw]}>
+								{informacion}
+							</ReactMarkdown>
 						</div>
 					</div>
 				</div>
 
 			</div>
 		</div>
-  );
+  	);
 }
 
 const styles: { [key: string]: React.CSSProperties } = {
@@ -201,10 +359,10 @@ const styles: { [key: string]: React.CSSProperties } = {
 		borderBottomRightRadius: '16px',
 		textAlign: 'center',
 	},
-  hoursWrapper: {
-    position: 'relative',
-    width: '100%',
-    overflow: 'hidden',
+  	hoursWrapper: {
+		position: 'relative',
+		width: '100%',
+		overflow: 'hidden',
 		display: 'flex',
 		flexDirection: 'row',
 		fontFamily: '"Verdana", sans-serif',
@@ -213,7 +371,7 @@ const styles: { [key: string]: React.CSSProperties } = {
 		borderBottomLeftRadius: '16px',
 		borderBottomRightRadius: '16px',
 		userSelect: 'none',
-  },
+  	},
 	hoursLinkStyle: {
 		color: 'black',
 		display: 'flex',
@@ -226,42 +384,73 @@ const styles: { [key: string]: React.CSSProperties } = {
 		minHeight: '500px',
 		display: 'flex',
 		flexDirection: 'row',
-		gap: '16px',
+		gap: '48px',
 	},
 	whiteCardBox: {
 		display: 'flex',
 		flexDirection: 'column',
 		color: 'black',
-    backgroundColor: '#FFFFFF',
-    borderRadius: '16px',
-    border: 'none',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+		backgroundColor: '#FFFFFF',
+		borderRadius: '16px',
+		border: 'none',
+		boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
 		fontFamily: '"Helvetica Neue", sans-serif',
 		fontSize: '16px',
-    width: '100%',
-    minHeight: '32px',
-    padding: '16px',
-    margin: '0',
-    boxSizing: 'border-box',
-  },
+		width: '100%',
+		minHeight: '32px',
+		padding: '16px',
+		margin: '0',
+		boxSizing: 'border-box',
+  	},
 	whiteCardBoxButton: {
 		color: 'black',
 		borderRadius: '16px',
 		border: 'none',
-    fontWeight: 'bold',
-    textDecoration: 'none',
-    userSelect: 'none',
-    textAlign: 'center', // horizontal
-    alignContent: 'center', // vertical
-    padding: '4px 24px',
-    cursor: 'pointer',
+		fontWeight: 'bold',
+		textDecoration: 'none',
+		userSelect: 'none',
+		textAlign: 'center', // horizontal
+		alignContent: 'center', // vertical
+		padding: '4px 24px',
+		cursor: 'pointer',
 		width: 'auto',
 		marginTop: '8px',
-    fontSize: '16px',
-  },
+    	fontSize: '16px',
+ 	},
 	whiteCardImg: {
-    height: '24px',
-    width: '24px',
-    objectFit: 'contain',
-  },
+		height: '24px',
+		width: '24px',
+		objectFit: 'contain',
+  	},
+	panelNavegacion: {
+		display: 'flex',
+		gap: '0.5rem',
+		marginBottom: '16px',
+		flexWrap: 'wrap',
+		justifyContent: 'center',
+	},
+	botonNavegacion: {
+		padding: '0.5rem 1rem',
+		backgroundColor: '#ddd',
+		border: '1px solid #bbb',
+		borderRadius: '4px',
+		fontFamily: '"Helvetica Neue", sans-serif',
+		textDecoration: 'none',
+		color: '#333'
+	},
+	buscadorNavegacion: {
+		padding: '0.5rem',
+		borderRadius: '4px',
+		border: '1px solid #ccc',
+		width: '100px'
+	},
+	buscadorBotonNavegacion: {
+		padding: '0.5rem 1rem',
+		backgroundColor: 'black',
+		color: 'white',
+		border: 'none',
+		borderRadius: '4px',
+		cursor: 'pointer',
+		fontFamily: '"Helvetica Neue", sans-serif',
+	}
 }

@@ -40,8 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 <div style={styles.centerDiv}>
                   <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
                   <Link href="/canchas?emparejamiento=true" style={styles.centerDivText}> Buscar Equipo </Link>
-                  <Link href="/nosotros" style={styles.centerDivText}> Nosotros </Link>
-                  <Link href="/develop" style={styles.centerDivText}> Develop </Link>
+                  <Link href="/inicio/blog/nosotros" style={styles.centerDivText}> Nosotros </Link>
                 </div>
 
                 <LoginButton />
