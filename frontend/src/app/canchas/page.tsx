@@ -36,39 +36,46 @@ export default function CalendarioPage() {
     return `${yyyy}-${mm}-${dd}`;
   });
 
-  const [modal, setModal] = useState<{ cancha: string; hora: string } | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reservas, setReservas] = useState<any[]>([]);
 
   return (
     <div style={{
       padding: '40px',
-      backgroundColor: '#f5f5f5',
+      backgroundColor: '#f4f6f8',
       minHeight: '100vh',
-      fontFamily: 'Arial, sans-serif'
+      fontFamily: 'Segoe UI, sans-serif'
     }}>
+      <div style={{
+        maxWidth: '1000px',
+        margin: '0 auto',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+        padding: '30px'
+      }}>
 
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '2.5rem', color: '#0070f3' }}>Reservar Canchas</h1>
-        <p style={{ fontSize: '1.1rem', color: '#555' }}>
-          Selecciona una fecha y elige tu horario preferido
-        </p>
-      </div>
+        <h2 style={{
+          fontSize: '24px',
+          marginBottom: '20px',
+          borderBottom: '1px solid #e0e0e0',
+          paddingBottom: '10px',
+          color: '#333'
+        }}>
+          Calendario de Canchas
+        </h2>
 
-      <label style={{ fontWeight: 'bold' }}>Selecciona una fecha:</label>
-      <input
-        type="date"
-        value={fecha}
-        onChange={(e) => setFecha(e.target.value)}
-        style={{ marginBottom: 40, display: 'block' }}
-      />
+        <label style={{ fontWeight: 'bold' }}>Selecciona una fecha:</label>
+        <input
+          type="date"
+          value={fecha}
+          onChange={(e) => setFecha(e.target.value)}
+          style={{ marginBottom: 30, display: 'block' }}
+        />
 
-      {fecha && (
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-          gap: '20px',
-          marginBottom: '40px'
+          gap: '20px'
         }}>
           {canchas.map((cancha) => (
             <div key={cancha.id} style={{
@@ -77,7 +84,7 @@ export default function CalendarioPage() {
               borderRadius: '10px',
               boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
             }}>
-              <h2 style={{ color: '#333' }}>{cancha.nombre}</h2>
+              <h3 style={{ color: '#0070f3' }}>{cancha.nombre}</h3>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {horarios.map((hora) => {
                   const estaReservado = reservas.some(
@@ -90,7 +97,12 @@ export default function CalendarioPage() {
                       disabled={estaReservado}
                       onClick={() => {
                         if (session?.user) {
-                          setModal({ cancha: cancha.nombre, hora });
+                          const query = new URLSearchParams({
+                            cancha: cancha.nombre,
+                            hora,
+                            fecha
+                          }).toString();
+                          window.location.href = `/pago?${query}`;
                         } else {
                           alert("Debes iniciar sesión para reservar.");
                         }
@@ -110,8 +122,7 @@ export default function CalendarioPage() {
                         justifyContent: 'center',
                         boxShadow: '2px 2px 4px rgba(0,0,0,0.1)',
                         cursor: estaReservado ? 'not-allowed' : 'pointer',
-                        fontSize: '12px',
-                        transition: 'transform 0.1s ease-in-out'
+                        fontSize: '12px'
                       }}
                     >
                       <div>{hora}</div>
@@ -123,63 +134,7 @@ export default function CalendarioPage() {
             </div>
           ))}
         </div>
-      )}
-
-      {modal && (
-        <div style={{
-          position: 'fixed', top: 0, left: 0,
-          width: '100%', height: '100%',
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          display: 'flex', justifyContent: 'center', alignItems: 'center',
-          zIndex: 1000
-        }}>
-          <div style={{
-            background: 'white', padding: '24px', borderRadius: '8px',
-            width: '300px', textAlign: 'center'
-          }}>
-            <h3>Confirmar Reserva</h3>
-            <p><strong>Usuario:</strong> {session?.user?.name}</p>
-            <p><strong>Cancha:</strong> {modal.cancha}</p>
-            <p><strong>Horario:</strong> {modal.hora}</p>
-            <button
-              onClick={() => {
-                setReservas([...reservas, {
-                  usuario: session?.user?.name,
-                  cancha: modal.cancha,
-                  hora: modal.hora,
-                  fecha
-                }]);
-                setModal(null);
-              }}
-              style={{
-                marginTop: '10px',
-                padding: '10px 20px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer'
-              }}
-            >
-              Confirmar
-            </button>
-            <button
-              onClick={() => setModal(null)}
-              style={{
-                marginTop: '10px',
-                marginLeft: '10px',
-                padding: '10px 20px',
-                backgroundColor: '#ccc',
-                border: 'none',
-                borderRadius: '5px',
-                cursor: 'pointer'
-              }}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
