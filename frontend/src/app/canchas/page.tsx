@@ -37,6 +37,7 @@ export default function CalendarioPage() {
   });
 
   const [modal, setModal] = useState<{ cancha: string; hora: string } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [reservas, setReservas] = useState<any[]>([]);
 
   return (
