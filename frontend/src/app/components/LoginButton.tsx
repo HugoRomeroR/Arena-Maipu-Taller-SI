@@ -22,7 +22,7 @@ export default function LoginButton() {
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [menuOptions, setMenuOptions] = useState<MenuOption[]>([
-    { name: 'Ver mi perfil', ref: '/perfil?ver=informacion', isHovered: false },
+    { name: 'Ver mi perfil', ref: '/perfil?ver=información', isHovered: false },
     { name: 'Ver mis notificaciones', ref: '/perfil?ver=notificaciones', isHovered: false },
     { name: 'Ver mis reservas', ref: '/perfil?ver=reservas', isHovered: false },
     { name: 'Cerrar sesión', ref: '/cerrar-sesion', isHovered: false },
@@ -157,6 +157,6 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: 'white',
   },
   logoutItem: {
-    color: 'red',
+    color: '#d9534f',
   },
 };

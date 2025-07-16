@@ -2,7 +2,6 @@
 
 import { useSearchParams, useRouter, useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { signIn } from "next-auth/react";
 
 export default function VerificarEmailPage() {
   const searchParams = useSearchParams();
@@ -36,12 +35,7 @@ export default function VerificarEmailPage() {
         if (data.type === 'register') {
           router.replace('/iniciar-sesion?registro-exitoso=true');
         } else if (data.type === 'recover') {
-          await signIn("credentials", {
-            redirect: false,
-            email: data.email,
-            password: data.password,
-          });
-          router.replace('/perfil?recuperacion-exitosa=true');
+          router.replace('/iniciar-sesion?recuperacion-exitosa=true');
         }
       };
     }

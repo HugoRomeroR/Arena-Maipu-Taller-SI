@@ -1,5 +1,6 @@
 // app/api/devtest/route.ts
 import { generateVerificationToken } from '@/app/lib/generateVerificationToken';
+import generatePassword from '@/app/components/utilities/generatePassword';
 import { sendVerificationEmail } from "@/app/lib/emailResend";
 import { NextResponse } from 'next/server';
 import { randomUUID } from 'crypto';
@@ -30,6 +31,7 @@ export async function POST(req: Request) {
     };
     let publicData;
     let privateData;
+    let typeConfirmed;
 
     // Revisa todos los tipos de petición
     if (type !== 'register' && type !== 'recover') {
@@ -46,13 +48,16 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: 'error', error: 'El correo electrónico es obligatorio para la recuperación.' }, { status: 400 });
       }
       else {
+        typeConfirmed = 'recover';
         const randomId = randomUUID();
+        const randomPassword = generatePassword(8);
         publicData = {
           randomId: randomId,
           email: recoverData.email,
         };
         privateData = {
           type: 'recover',
+          password: randomPassword,
         };
       }
     }
@@ -62,6 +67,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ status: 'error', error: 'Faltan datos obligatorios para el registro.' }, { status: 400 });
       }
       else {
+        typeConfirmed = 'register';
         const randomId = randomUUID();
         publicData = {
           randomId: randomId,
@@ -87,13 +93,17 @@ export async function POST(req: Request) {
       const token = generateVerificationToken(publicData, randomSeed);
       // Se genero un token exitosamente
       try {
-          await db.query(
-            `INSERT INTO token_verificacion_email (id, public_data, private_data) 
-            VALUES ($1, $2, $3)`,
-            [publicData.randomId, publicData, privateData]
-          );
-          await sendVerificationEmail(publicData.email, `${process.env.NEXT_PUBLIC_DOMAIN_URL}/verificar-email/${randomSeed}?token=${token}`, privateData.type);
-          return NextResponse.json({ status: 'ok' });
+        await db.query(
+          `INSERT INTO token_verificacion_email (id, public_data, private_data) 
+          VALUES ($1, $2, $3)`,
+          [publicData.randomId, publicData, privateData]
+        );
+        if (typeConfirmed === 'register') {
+          await sendVerificationEmail(publicData.email, `${process.env.NEXT_PUBLIC_DOMAIN_URL}/verificar-email/${randomSeed}?token=${token}`, privateData.type, null);
+        } else if (typeConfirmed === 'recover') {
+          await sendVerificationEmail(publicData.email, `${process.env.NEXT_PUBLIC_DOMAIN_URL}/verificar-email/${randomSeed}?token=${token}`, privateData.type, privateData.password);
+        }
+        return NextResponse.json({ status: 'ok' });
       } catch {
         return NextResponse.json({ status: 'error', error: 'Error al guardar los datos.' }, { status: 400 });
       };

@@ -1,6 +1,6 @@
 import React from "react";
 import imageLayout from "../../../public/placeholder-bg.jpg";
-import { parseShortDate } from "./utilities/parseData";
+import { timeAgo } from "./utilities/parseData";
 
 export function generateArticleLayout(
   layout: number,
@@ -10,7 +10,7 @@ export function generateArticleLayout(
   date: string
 ): React.ReactElement {
   const imageSrc = image ? image : imageLayout.src;
-  const shortDate = parseShortDate(date);
+  const dateTimeAgo = timeAgo(date, 30);
   switch (layout) {
     case 1:
       // 1. Imagen / Título / Fecha
@@ -21,7 +21,7 @@ export function generateArticleLayout(
               <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
             </div>
             <div style={styles.titleLayout}>{title}</div>
-            <div style={styles.dateLayout}>{shortDate}</div>
+            <div style={styles.dateLayout}>{dateTimeAgo}</div>
           </div>
         </a>
       );
@@ -45,7 +45,7 @@ export function generateArticleLayout(
               >
                 {title}
               </div>
-              <div style={styles.dateLayout}>{shortDate}</div>
+              <div style={styles.dateLayout}>{dateTimeAgo}</div>
             </div>
           </div>
         </a>
@@ -67,7 +67,7 @@ export function generateArticleLayout(
               >
                 {title}
               </div>
-              <div style={{ ...styles.dateLayout, textAlign: 'right' }}>{shortDate}</div>
+              <div style={{ ...styles.dateLayout, textAlign: 'right' }}>{dateTimeAgo}</div>
             </div>
             <div style={{ ...styles.imageLayout, flexBasis: '60%' }}>
               <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
@@ -84,7 +84,7 @@ export function generateArticleLayout(
             <div style={styles.imageLayout}>
               <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
             </div>
-            <div style={{ ...styles.dateLayout, textAlign: 'center' }}>{shortDate}</div>
+            <div style={{ ...styles.dateLayout, textAlign: 'center' }}>{dateTimeAgo}</div>
           </div>
         </a>
       );

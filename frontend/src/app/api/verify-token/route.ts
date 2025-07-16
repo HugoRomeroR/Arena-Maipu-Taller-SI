@@ -138,8 +138,8 @@ export async function POST(req: Request) {
       // Si todo es válido
       return NextResponse.json({ valid: true, type: 'register' });
     }
-    // Si es una recuperación, no se hace nada en la base de datos aun,
-    // solo se verifica que el email exista
+    // Si es una recuperación, verifica la existencia del email y le cambia la contraseña
+    // a la nueva
     else if (storedPrivateData.type === 'recover') {
       const emailExists = await db.query(
         `SELECT 1 FROM usuario WHERE email = $1`,
@@ -151,10 +151,11 @@ export async function POST(req: Request) {
         return NextResponse.json({ valid: false, error: 'El email no está registrado' }, { status: 400 });
       }
 
-      // Recupera el email y la contraseña del usuario
-      const password = await db.query(
-        `SELECT contrasena FROM usuario WHERE email = $1`,
-        [storedPublicData.email]
+      // Asigna la nueva contraseña
+      const hashedPassword = await bcrypt.hash(storedPrivateData.password, 10);
+      await db.query(
+        `UPDATE usuario SET contrasena = $1 WHERE email = $2`,
+        [hashedPassword, storedPublicData.email]
       );
       // Elimina la row
       await db.query(
@@ -163,7 +164,7 @@ export async function POST(req: Request) {
       );
 
       // Si todo es válido
-      return NextResponse.json({ valid: true, type: 'recover', email: storedPublicData.email, password: password });
+      return NextResponse.json({ valid: true, type: 'recover' });
     }
 
   } catch (err) {

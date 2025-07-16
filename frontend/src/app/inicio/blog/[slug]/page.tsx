@@ -56,72 +56,76 @@ export default function BlogPost() {
         return notFound()
     } else if (status === 'default') {
         return (
-            <div style={styles.container}>
-                Cargando contenido...
+            <div style={{ justifyItems: 'center' }}>
+                <div style={styles.container}>
+                    Cargando contenido...
+                </div>
             </div>
         )
     }
 
     return (
-    <div style={styles.container}>
-        
-        {/* Estado del artículo */}
-        <div style={styles.estado}>
-        <strong>{article?.estado ? article?.estado.toUpperCase() : 'DESCONOCIDO'}</strong> | Creado: { article?.fecha_creacion ? new Date(article.fecha_creacion).toLocaleDateString() : "Error al conseguir la fecha..." } { article?.fecha_modificacion ? '| Modificado:' + new Date(article.fecha_modificacion).toLocaleDateString() : ""}
-        </div>
+    <div style={{ justifyItems: 'center' }}>
+        <div style={styles.container}>
+            
+            {/* Estado del artículo */}
+            <div style={styles.estado}>
+            <strong>{article?.estado ? article?.estado.toUpperCase() : 'DESCONOCIDO'}</strong> | Creado: { article?.fecha_creacion ? new Date(article.fecha_creacion).toLocaleDateString() : "Error al conseguir la fecha..." } { article?.fecha_modificacion ? '| Modificado:' + new Date(article.fecha_modificacion).toLocaleDateString() : ""}
+            </div>
 
-        {/* Navegación entre posts */}
-        <div style={styles.navegacion}>
-            <div style={styles.navegacionItem}>
-                {postAnterior && (
-                <Link href={`/inicio/blog/${postAnterior.slug}`}>
-                    ← {postAnterior.titulo}
-                </Link>
+            {/* Navegación entre posts */}
+            <div style={styles.navegacion}>
+                <div style={styles.navegacionItem}>
+                    {postAnterior && (
+                    <Link href={`/inicio/blog/${postAnterior.slug}`} style={styles.neighborPost}>
+                        ← {postAnterior.titulo}
+                    </Link>
+                    )}
+                </div>
+
+                <div style={styles.navegacionItem}>
+                    <strong>{article?.titulo}</strong>
+                </div>
+
+                <div style={styles.navegacionItem}>
+                    {postSiguiente && (
+                    <Link href={`/inicio/blog/${postSiguiente.slug}`} style={styles.neighborPost}>
+                        {postSiguiente.titulo} →
+                    </Link>
+                    )}
+                </div>
+            </div>
+
+            <hr />        
+
+            {/* Imagen y Título */}
+            <div style={styles.imagenTitulo}>
+                {article?.imagen_url && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                        src={article.imagen_url}
+                        alt={article.titulo}
+                        width={120}
+                        height={120}
+                        style={styles.imagen}
+                    />
                 )}
+                <h1 style={styles.titulo}>{article?.titulo}</h1>
             </div>
 
-            <div style={styles.navegacionItem}>
-                <strong>{article?.titulo}</strong>
+            {/* Autor y Fecha */}
+            <div style={styles.autorFecha}>
+                Por {article?.autor_nombre ? <strong>{article.autor_nombre}</strong> : 'Sin autor'} | Publicado: {article?.fecha_publicacion ? new Date(article.fecha_publicacion).toLocaleDateString() : 'Sin publicar'}
             </div>
 
-            <div style={styles.navegacionItem}>
-                {postSiguiente && (
-                <Link href={`/inicio/blog/${postSiguiente.slug}`}>
-                    {postSiguiente.titulo} →
-                </Link>
-                )}
+            <hr />
+
+            {/* Contenido del artículo */}
+            <div style={styles.contenido}>
+                <ReactMarkdown rehypePlugins={[rehypeRaw]}>
+                    {article?.contenido}
+                </ReactMarkdown>
             </div>
-        </div>
-
-        <hr />        
-
-        {/* Imagen y Título */}
-        <div style={styles.imagenTitulo}>
-            {article?.imagen_url && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                    src={article.imagen_url}
-                    alt={article.titulo}
-                    width={120}
-                    height={120}
-                    style={styles.imagen}
-                />
-            )}
-            <h1 style={styles.titulo}>{article?.titulo}</h1>
-        </div>
-
-        {/* Autor y Fecha */}
-        <div style={styles.autorFecha}>
-            Por {article?.autor_nombre ? <strong>{article.autor_nombre}</strong> : 'Sin autor'} | Publicado: {article?.fecha_publicacion ? new Date(article.fecha_publicacion).toLocaleDateString() : 'Sin publicar'}
-        </div>
-
-        <hr />
-
-        {/* Contenido del artículo */}
-        <div style={styles.contenido}>
-            <ReactMarkdown rehypePlugins={[rehypeRaw]}>
-                {article?.contenido}
-            </ReactMarkdown>
         </div>
     </div>
     )
@@ -129,9 +133,10 @@ export default function BlogPost() {
 
 const styles: { [key: string]: React.CSSProperties } = {
     container: {
-        maxWidth: '800px',
-        margin: '2rem auto',
-        padding: '2rem',
+        boxSizing: 'border-box',
+        width: 'calc(100% - 48px)',
+        padding: '24px',
+        margin: '24px',
         backgroundColor: '#fff',
         border: '1px solid #ddd',
         borderRadius: '16px',
@@ -154,12 +159,17 @@ const styles: { [key: string]: React.CSSProperties } = {
         fontSize: '14px',
         overflow: 'hidden',
     },
+    neighborPost: {
+        textDecoration: 'none',
+        color: '#666666',
+    },
     navegacionItem: {
         flex: '1',
         padding: '0.75rem 1rem',
         wordBreak: 'break-word',
         whiteSpace: 'normal',
         textAlign: 'center',
+        color: '#2e2e2e',
     },
     tituloNavegacion: {
         textAlign: 'center',
@@ -202,5 +212,6 @@ const styles: { [key: string]: React.CSSProperties } = {
         borderRadius: '0px',
         color: '#111',
         fontSize: '16px',
+        overflow: 'hidden',
     },
 };
