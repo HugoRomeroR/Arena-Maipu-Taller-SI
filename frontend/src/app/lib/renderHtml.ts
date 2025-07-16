@@ -1,11 +1,23 @@
 // lib/renderHtml.ts
 
-export function renderHtml(link: string, type: string): string {
+export function renderHtml(link: string, type: string, password: string | null): string {
+
+    const registerMessage = `
+        <p>Para completar el proceso de registro, presione el botón de verificación. ¡Gracias por confiar en nosotros!</p>
+    `
+    const recoverMessage = `
+        <p>Para restablecer su contraseña, presione el botón de verificación. Si usted no solicitó este cambio, puede ignorar este mensaje.</p>
+        <p>Si fuiste tú, al acceder al botón tu contraseña se actualizará automaticamente a la siguiente:</p>
+        <div style="margin-bottom: 8px; margin-top: 8px; background-color: #1a1a1a; color: white; padding: 8px; border-radius: 8px;">
+            ${password}
+        </div>
+        <strong>¡Hazlo con precaución!</strong>
+    `
 
     const message =
-    type === 'register'
-        ? 'Para completar el proceso de registro, presione el botón de verificación. ¡Gracias por confiar en nosotros!'
-        : 'Para restablecer su contraseña, presione el botón de verificación. Si usted no solicitó este cambio, puede ignorar este mensaje.';
+        type === 'register'
+            ? registerMessage
+            : recoverMessage
 
     return `
         <!DOCTYPE html>

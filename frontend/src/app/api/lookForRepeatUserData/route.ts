@@ -7,6 +7,10 @@ export async function POST(req: Request) {
   const client = await db.connect();
 
   try {
+    if (!data || Object.keys(data).length === 0) {
+      return NextResponse.json({ message: `Error al guardar los datos enviados`, messageType: 'default' });
+    }
+
     if (data.email) {
       const res = await client.query('SELECT 1 FROM usuario WHERE email = $1 LIMIT 1', [data.email]);
       if ((res.rowCount ?? 0) > 0)

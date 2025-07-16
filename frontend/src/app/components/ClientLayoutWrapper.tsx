@@ -10,28 +10,55 @@ export default function ClientLayoutWrapper({ children }: { children: React.Reac
   const pathname = usePathname()
 
   useEffect(() => {
+    let frame: number
+    let resizeObserver: ResizeObserver
+    let mutationObserver: MutationObserver
+
     const checkScroll = () => {
-      const body = document.getElementById('body')
-      if (body instanceof HTMLElement) {
-        const isScrollActive = body.scrollHeight > body.clientHeight
-        setHaveScroll(isScrollActive)
-      }
+      const el = document.documentElement
+      const isScrollActive = el.scrollHeight > el.clientHeight
+      setHaveScroll(isScrollActive)
     }
+
+    const scheduleScrollCheck = () => {
+      let count = 0
+      const checkRepeatedly = () => {
+        checkScroll()
+        count++
+        if (count < 5) {
+          frame = requestAnimationFrame(checkRepeatedly)
+        }
+      }
+      checkRepeatedly()
+    }
+
+    // Escuchar resize de ventana
     window.addEventListener('resize', checkScroll)
 
-    // Iniciar setInterval cada 10ms durante 100ms
-    checkScroll()
-    const interval = setInterval(checkScroll, 10)
+    const target = document.getElementById('body') || document.body
 
-    // Detenerlo después de 100ms
-    const timeout = setTimeout(() => {
-      clearInterval(interval)
-    }, 100)
+    // Observar cambios de tamaño
+    // eslint-disable-next-line prefer-const
+    resizeObserver = new ResizeObserver(checkScroll)
+    resizeObserver.observe(target)
+
+    // Observar cambios estructurales (nodos hijos, etc.)
+    // eslint-disable-next-line prefer-const
+    mutationObserver = new MutationObserver(checkScroll)
+    mutationObserver.observe(target, {
+      childList: true,
+      subtree: true,
+    })
+
+    // Chequeos iniciales
+    checkScroll()
+    scheduleScrollCheck()
 
     return () => {
-      clearInterval(interval)
-      clearTimeout(timeout)
       window.removeEventListener('resize', checkScroll)
+      cancelAnimationFrame(frame)
+      resizeObserver.disconnect()
+      mutationObserver.disconnect()
     }
   }, [pathname])
 

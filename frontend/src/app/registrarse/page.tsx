@@ -77,7 +77,6 @@ export default function Register() {
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
-    // Aqui deberia ir la llamada a services
     setLoading(true)
     const userAvailable = await lookForRepeatUserData({
       email: form.email,

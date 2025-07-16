@@ -20,9 +20,13 @@ export default function Login() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({})
   const [loading, setLoading] = useState(false)
   
-  const getParams = () => {
+  const isSuccessfullRegister = () => {
     const registerResult = searchParams.get('registro-exitoso') === 'true'
     return registerResult
+  }
+  const isSuccessfullRecover = () => {
+    const recoverResult = searchParams.get('recuperacion-exitosa') === 'true'
+    return recoverResult
   }
 
   // Gestiona cambios en el formulario y quita errores tras cambio
@@ -111,11 +115,19 @@ export default function Login() {
       <div className="background-img-color" />
       <div style={styles.whiteBoxWrapper}>
         {
-          getParams() &&
+          isSuccessfullRegister() &&
           <div style={styles.approved}>
             <div style= {{ fontSize: '48px' }}>✔</div>
             <div>¡Su cuenta ha sido confirmada con exito!</div>
             <div>Ahora puede iniciar sesión a su cuenta.</div>
+          </div>
+        }
+        {
+          isSuccessfullRecover() &&
+          <div style={styles.approved}>
+            <div style= {{ fontSize: '48px' }}>✔</div>
+            <div>¡Su contraseña ha sido cambiada con exito!</div>
+            <div>Ahora puede iniciar sesión con su nueva contraseña.</div>
           </div>
         }
         <form onSubmit={handleSubmit} style={styles.whiteBox}>
