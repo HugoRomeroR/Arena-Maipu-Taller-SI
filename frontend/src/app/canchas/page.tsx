@@ -36,6 +36,7 @@ export default function CalendarioPage() {
     return `${yyyy}-${mm}-${dd}`;
   });
 
+  // eslint-disable-next-line
   const [reservas, setReservas] = useState<any[]>([]);
 
   return (
