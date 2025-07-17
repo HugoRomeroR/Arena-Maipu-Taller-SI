@@ -161,7 +161,7 @@ export default function MiPerfil() {
 
                 <hr style={styles.hr} />
 
-                // Mensjae hardcodeado
+                { /* Mensaje hardcodeado */ }
                 <p style={{ margin: 0 }}>Ocurrío un error al cargar las reservas. Por favor, intentelo denuevo.</p>
                 
             </div>
@@ -173,7 +173,7 @@ export default function MiPerfil() {
 
                 <hr style={styles.hr} />
                 
-                // Mensjae hardcodeado
+                { /* Mensaje hardcodeado */ }
                 <p style={{ margin: 0 }}>Ocurrío un error al cargar las notificaciones. Por favor, intentelo denuevo.</p>
 
             </div>
