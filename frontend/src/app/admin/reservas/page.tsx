@@ -17,7 +17,7 @@ export default function ReservasAdminPage() {
       try {
         const res = await fetch('/api/calendarios', { cache: 'no-store' });
         const data = await res.json();
-        setReservas(data.reservas); // NO USES calendarios
+        setReservas(data); // NO USES calendarios
       } catch (error) {
         console.error('Error al cargar reservas:', error);
       }
