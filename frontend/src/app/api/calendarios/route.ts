@@ -12,7 +12,7 @@ export async function GET(req: Request) {
 
   try {
     await client.connect();
-    const result = await client.query('SELECT * FROM reservas);
+    const result = await client.query('SELECT * FROM reservas');
     return NextResponse.json(result.rows);
   } catch (error) {
     console.error('Error en /api/calendarios:', error);
