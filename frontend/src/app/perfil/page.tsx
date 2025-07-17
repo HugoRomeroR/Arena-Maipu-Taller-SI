@@ -160,6 +160,10 @@ export default function MiPerfil() {
                 </div>
 
                 <hr style={styles.hr} />
+
+                // Mensjae hardcodeado
+                <p style={{ margin: 0 }}>Ocurrío un error al cargar las reservas. Por favor, intentelo denuevo.</p>
+                
             </div>
         case 'notificaciones':
             return <div>
@@ -168,6 +172,10 @@ export default function MiPerfil() {
                 </div>
 
                 <hr style={styles.hr} />
+                
+                // Mensjae hardcodeado
+                <p style={{ margin: 0 }}>Ocurrío un error al cargar las notificaciones. Por favor, intentelo denuevo.</p>
+
             </div>
         case 'cerrar-sesión':
             return <div>
