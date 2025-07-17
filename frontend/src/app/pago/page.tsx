@@ -11,7 +11,7 @@ export default function PagoPage() {
   const hora = searchParams.get('hora');
   const fecha = searchParams.get('fecha');
 const confirmarPago = async () => {
-  const res = await fetch('/api/calendarios', {
+  const res = await fetch('/api/pago', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
