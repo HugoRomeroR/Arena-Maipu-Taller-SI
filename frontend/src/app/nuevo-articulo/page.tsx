@@ -4,10 +4,12 @@ import dynamic from 'next/dynamic';
 import { useState } from 'react';
 import LayoutCarousel from '../components/LayoutCarousel';
 import { PreviewLayouts } from '../components/PreviewLayouts';
+import { useRouter } from 'next/navigation';
 
 const MarkdownEditor = dynamic(() => import('../components/MarkdownEditor'), { ssr: false });
 
 export default function NuevoArticulo() {
+  const router = useRouter()
   const [title, setTitle] = useState<string>('');
   const [isImage, setIsImage] = useState<boolean>(false);
   const [background, setBackground] = useState<string>('');
@@ -32,24 +34,43 @@ export default function NuevoArticulo() {
     setArticleLayout(index);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    function getLocalDateString() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 19).replace('T', ' ');
+    }
     const post = {
       title: title,
       background: background,
       content: content,
       slug: slug,
       articleLayout: articleLayout,
-      dateLayout: new Date().toISOString(),
+      dateLayout: getLocalDateString(),
     };
+    const res = await fetch('/api/nuevo-articulo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        title: post.title,
+        background: post.background,
+        content: post.content,
+        slug: post.slug,
+        articleLayout: post.articleLayout,
+        dateLayout: post.dateLayout,
+      }),
+    });
 
-    alert(`Simulado: Se agrego su nuevo artículo! su contenido es:
-        Titulo: ${post.title}
-        Imagen: ${post.background}
-        Contenido: ${post.content}
-        Slug: ${post.slug}
-        LayoutID: ${post.articleLayout}
-        Fecha: ${post.dateLayout}
-      `)
+    const result = await res.json();
+
+    if (res.ok) {
+      alert('✅ Artículo agregado con éxito!');
+      router.replace('/inicio');
+    } else {
+      alert(`❌ Error al agregar el artículo: ${result.error || 'Error desconocido'}`);
+    }
   };
 
   const textToSlug = (text: string): string => {

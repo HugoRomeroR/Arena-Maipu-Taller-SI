@@ -41,6 +41,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                   <Link href="/canchas" style={styles.centerDivText}> Canchas </Link>
                   <Link href="/canchas?emparejamiento=true" style={styles.centerDivText}> Buscar Equipo </Link>
                   <Link href="/inicio/blog/nosotros" style={styles.centerDivText}> Nosotros </Link>
+                  {session && session.user.role === 'admin' &&
+                    <Link href="/admin" style={styles.centerDivText}> Panel de Administrador </Link>
+                  }
                 </div>
 
                 <LoginButton />

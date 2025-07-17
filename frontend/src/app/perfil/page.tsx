@@ -4,11 +4,12 @@ import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { signOut, useSession } from "next-auth/react";
 import { parseLargeDate } from '../components/utilities/parseData';
+import { editUser } from '../lib/editUser';
 import Image from 'next/image';
 import editIcon from "../../../public/pencil.png";
 
 export default function MiPerfil() {
-    const { data: session, status } = useSession();
+    const { data: session, status, update } = useSession();
     const searchParams = useSearchParams();
     const router = useRouter();
     const [content, setContent] = useState<string>('informacion');
@@ -36,7 +37,7 @@ export default function MiPerfil() {
 
         const handleEditButton = () => {
             setCurrentEdit(key);
-            setInputValue(value); // Pre-fill input
+            setInputValue(value);
         };
 
         const handleCancel = () => {
@@ -44,9 +45,11 @@ export default function MiPerfil() {
             setInputValue('');
         };
 
-        const handleAccept = () => {
-            console.log('Guardado:', inputValue);
-            // Aquí deberías llamar a tu función de guardado real
+        const handleAccept = async () => {
+            const response = await editUser(inputValue, currentEdit);
+            if (response.status === 'ok') {
+                await update();
+            }
             setCurrentEdit('default');
         };
 
@@ -138,6 +141,12 @@ export default function MiPerfil() {
                             {infoBlockDisplay('Cuenta creada en', parseLargeDate(session.user?.createdAt) ?? '', 'createdAt', false)}
                             {infoBlockDisplay('Última conexión en', parseLargeDate(session.user?.lastLogin) ?? '', 'lastLogin', false)}
                             {infoBlockDisplay('Última modificación', parseLargeDate(session.user?.updatedAt) ?? '', 'updatedAt', false)}
+                        
+                            <hr style={styles.hr} />
+                            <h3 style={styles.subTitleContent}>Contraseña</h3>
+                            <hr style={styles.hr} />
+
+                            {infoBlockDisplay('Actualizar contraseña', '', 'contrasena', true)}
                         </>
                     ) : (
                         <h3 style={{ color: '#b00' }}>Aún no haz iniciado sesión</h3>

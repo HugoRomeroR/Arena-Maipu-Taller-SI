@@ -97,33 +97,41 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id
-        token.rut_usuario = user.rut_usuario
-        token.email = user.email
-        token.telefono = user.telefono
-        token.username = user.username
-        token.displayname = user.displayname
-        token.role = user.role
-        token.createdAt = user.createdAt
-        token.lastLogin = user.lastLogin
-        token.updatedAt = user.updatedAt
+        // Login inicial, asignar datos
+        token.id = user.id;
+        token.rut_usuario = user.rut_usuario;
+        // ...
+      } else if (token.id) {
+        // Cada vez que se actualiza el JWT, recarga datos desde DB
+        const dbUser = await db.query('SELECT * FROM usuario WHERE id_usuario = $1', [token.id]);
+        if (dbUser && dbUser.rowCount && dbUser.rowCount > 0) {
+          const u = dbUser.rows[0];
+          token.rut_usuario = u.rut_usuario;
+          token.email = u.email;
+          token.telefono = u.telefono;
+          token.username = u.nombre_unico;
+          token.displayname = u.nombre_publico;
+          token.role = u.rol_usuario;
+          token.createdAt = u.fecha_creacion;
+          token.updatedAt = u.fecha_ultima_modificacion;
+          // etc
+        }
       }
-      return token
+      return token;
     },
     async session({ session, token }) {
       if (token && session.user) {
-        session.user.id = token.id
-        session.user.rut_usuario = token.rut_usuario
-        session.user.email = token.email
-        session.user.telefono = token.telefono
-        session.user.username = token.username
-        session.user.displayname = token.displayname
-        session.user.role = token.role
-        session.user.createdAt = token.createdAt
-        session.user.lastLogin = token.lastLogin
-        session.user.updatedAt = token.updatedAt
+        session.user.id = token.id;
+        session.user.rut_usuario = token.rut_usuario;
+        session.user.email = token.email;
+        session.user.telefono = token.telefono;
+        session.user.username = token.username;
+        session.user.displayname = token.displayname;
+        session.user.role = token.role;
+        session.user.createdAt = token.createdAt;
+        session.user.updatedAt = token.updatedAt;
       }
-      return session
+      return session;
     },
-  },
+  }
 }
