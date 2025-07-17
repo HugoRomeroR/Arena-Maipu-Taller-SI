@@ -1,5 +1,30 @@
 // types/next-auth.d.ts
 import { DefaultSession, DefaultUser } from "next-auth";
+import { NextAuthOptions } from "next-auth";
+
+export const authOptions: NextAuthOptions = {
+  providers: [/* tus proveedores */],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role;
+        token.username = user.username;
+        token.displayname = user.displayname;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+        session.user.username = token.username as string;
+        session.user.displayname = token.displayname as string;
+      }
+      return session;
+    }
+  }
+};
 
 declare module "next-auth" {
   interface Session {

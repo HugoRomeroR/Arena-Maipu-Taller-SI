@@ -10,6 +10,26 @@ export default function PagoPage() {
   const cancha = searchParams.get('cancha');
   const hora = searchParams.get('hora');
   const fecha = searchParams.get('fecha');
+const confirmarPago = async () => {
+  const res = await fetch('/api/calendarios', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      usuario: session?.user?.name || session?.user?.email,
+      cancha,
+      hora,
+      fecha
+    })
+  });
+
+  const result = await res.json();
+  if (result.success) {
+    alert('Reserva registrada con éxito');
+    window.location.href = `/canchas?fecha=${fecha}`;
+  } else {
+    alert('Error al registrar la reserva');
+  }
+};
 
   return (
     <div style={{
@@ -79,19 +99,21 @@ export default function PagoPage() {
         {/* Botón de pago */}
         <div style={{ marginTop: '30px', textAlign: 'center' }}>
           <button
-            onClick={() => alert('Simulación de pago exitoso')}
-            style={{
-              backgroundColor: '#28a745',
-              color: 'white',
-              padding: '12px 32px',
-              border: 'none',
-              borderRadius: '6px',
-              fontSize: '16px',
-              cursor: 'pointer'
-            }}
-          >
-            Confirmar y Pagar
-          </button>
+  onClick={confirmarPago}
+  style={{
+    backgroundColor: '#28a745',
+    color: 'white',
+    padding: '12px 32px',
+    border: 'none',
+    borderRadius: '6px',
+    fontSize: '16px',
+    cursor: 'pointer'
+  }}
+>
+  Confirmar y Pagar
+</button>
+
+       
         </div>
       </div>
     </div>
