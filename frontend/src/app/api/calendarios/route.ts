@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { Client } from 'pg';
-
+// eslint-disable-next-line
 export async function GET(req: Request) {
   // const { searchParams } = new URL(req.url);
   // const fecha = searchParams.get('fecha');
