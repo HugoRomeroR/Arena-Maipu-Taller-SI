@@ -100,7 +100,7 @@ export default function BlogPost() {
 
             {/* Imagen y Título */}
             <div style={styles.imagenTitulo}>
-                {article?.imagen_url && (
+                {article?.imagen_url && !article.imagen_url.startsWith('#') && (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                         src={article.imagen_url}
@@ -135,6 +135,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     container: {
         boxSizing: 'border-box',
         width: 'calc(100% - 48px)',
+        maxWidth: '1000px',
         padding: '24px',
         margin: '24px',
         backgroundColor: '#fff',

@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   try {
     // Consigue "limit" artículos a partir de "offset" en la base de datos
     const result = await db.query(
-      `SELECT id_articulo, layout, titulo, imagen_url, slug, fecha_creacion
+      `SELECT id_articulo, layout, titulo, imagen_url, slug, fecha_publicacion
       FROM articulo
       WHERE estado NOT IN ('archivado', 'borrador')
       ORDER BY id_articulo DESC

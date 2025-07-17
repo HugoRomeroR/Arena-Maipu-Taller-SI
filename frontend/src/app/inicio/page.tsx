@@ -24,12 +24,12 @@ interface PostInfo {
 	titulo: string;
 	imagen_url: string;
 	slug: string;
-	fecha_creacion: string;
+	fecha_publicacion: string;
 }
 
 export default function Inicio() {
+	const { data: session, status } = useSession();
 	const searchParams = useSearchParams();
-	const { status } = useSession();
 	const router = useRouter();
 
 	// Consigue la información actualizada
@@ -267,6 +267,15 @@ export default function Inicio() {
 
 				{ /* Sección central: Artículos */ }
 				<div style={{ display: 'flex', flexDirection: 'column', gap: '24px', flexGrow: '1', height: 'auto' }}>
+					{(session !== null) && (session.user?.role === 'admin') && (
+							<div style={styles.createArticle}>
+								<h3 style={{ margin: 0 }}>Crear nuevo artículo:</h3>
+								<Link href="/nuevo-articulo" aria-label="Crear nuevo artículo" style={styles.newArticle}>
+									+
+								</Link>
+							</div>
+						)
+					}
 					{posts.length > 0 ? (
 						posts.map((post: PostInfo) => (
 							<div key={post.id_articulo}>
@@ -275,12 +284,12 @@ export default function Inicio() {
 									post.titulo,
 									post.imagen_url,
 									post.slug,
-									post.fecha_creacion
+									post.fecha_publicacion
 								)}
 							</div>
 						))
 					) : (
-						<div>No hay artículos disponibles.</div>
+						<div style={{ fontFamily: '"Helvetica Neue", sans-serif', display: 'flex', justifyContent: 'center', width: '100%' }}>No hay artículos disponibles.</div>
 					)}
 					<div style={styles.panelNavegacion}>
 						<a href={`/inicio?pagina=${Math.max(1, currentPage - 1)}`} style={styles.botonNavegacion}>← Atrás</a>
@@ -452,5 +461,31 @@ const styles: { [key: string]: React.CSSProperties } = {
 		borderRadius: '4px',
 		cursor: 'pointer',
 		fontFamily: '"Helvetica Neue", sans-serif',
+	},
+	newArticle: {
+		backgroundColor: "#A6F095",
+		border: "none",
+		borderRadius: "50%",
+		width: "40px",
+		height: "40px",
+		boxShadow: "0 2px 6px rgba(0, 0, 0, 0.2)",
+		cursor: "pointer",
+		fontSize: "20px",
+		fontWeight: "bold",
+		color: "#000",
+		display: "flex",
+		alignItems: "center",
+		justifyContent: "center",
+		textDecoration: 'none',
+	},
+	createArticle: {
+		fontFamily: '"Helvetica Neue", sans-serif',
+		padding: '16px',
+		backgroundColor: 'white',
+		borderRadius: '16px',
+		display: "flex",
+		gap: '16px',
+		justifyContent: 'center',
+		alignItems: "center",
 	}
 }

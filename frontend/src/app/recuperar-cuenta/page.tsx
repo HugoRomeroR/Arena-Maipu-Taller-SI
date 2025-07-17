@@ -148,7 +148,7 @@ export default function RecoverAccount() {
           </div>
           <p style={styles.footerText}>
             ¿Ya tienes cuenta?{' '}
-            <a href="/login" style={styles.link}>
+            <a href="/iniciar-sesion" style={styles.link}>
               Inicia sesión
             </a>
           </p>

@@ -1,5 +1,6 @@
 import React from "react";
 import imageLayout from "../../../public/placeholder-bg.jpg";
+import { StaticImageData } from 'next/image'
 import { timeAgo } from "./utilities/parseData";
 
 export function generateArticleLayout(
@@ -9,7 +10,36 @@ export function generateArticleLayout(
   slug: string,
   date: string
 ): React.ReactElement {
-  const imageSrc = image ? image : imageLayout.src;
+  
+  const getBackground = (image: string | null, imageLayout: StaticImageData) => {
+    if (image === null) {
+      // Si no hay imagen, genera un color aleatorio
+      const randomColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+      return {
+        backgroundColor: randomColor,
+        backgroundImage: 'none',
+      };
+    }
+
+    if (image.startsWith('#')) {
+      // Si empieza con #, se asume que es un color hexadecimal
+      return {
+        backgroundColor: image,
+        backgroundImage: 'none',
+      };
+    }
+
+    // Si no es color, se asume que es una URL de imagen
+    const imageSrc = image || imageLayout?.src;
+    return {
+      backgroundColor: 'transparent',
+      backgroundImage: `url(${imageSrc})`,
+    };
+  };
+
+  // Uso dentro del componente
+  const backgroundStyles = getBackground(image, imageLayout);
+
   const dateTimeAgo = timeAgo(date, 30);
   switch (layout) {
     case 1:
@@ -18,7 +48,7 @@ export function generateArticleLayout(
         <a href={`/inicio/blog/${slug}`} style={{ textDecoration: 'none', cursor: 'pointer' }}>
           <div key={1} style={styles.previewBoxLayout}>
             <div style={styles.imageLayout}>
-              <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
+              <div style={{ ...styles.imageBgLayout, ...backgroundStyles }}></div>
             </div>
             <div style={styles.titleLayout}>{title}</div>
             <div style={styles.dateLayout}>{dateTimeAgo}</div>
@@ -31,7 +61,7 @@ export function generateArticleLayout(
         <a href={`/inicio/blog/${slug}`} style={{ textDecoration: 'none', cursor: 'pointer' }}>
           <div key={2} style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
             <div style={{ ...styles.imageLayout, flexBasis: '65%', flexShrink: 0 }}>
-              <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
+              <div style={{ ...styles.imageBgLayout, ...backgroundStyles }}></div>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', flexBasis: '35%', flexShrink: 0 }}>
               <div
@@ -70,7 +100,7 @@ export function generateArticleLayout(
               <div style={{ ...styles.dateLayout, textAlign: 'right' }}>{dateTimeAgo}</div>
             </div>
             <div style={{ ...styles.imageLayout, flexBasis: '60%' }}>
-              <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
+              <div style={{ ...styles.imageBgLayout, ...backgroundStyles }}></div>
             </div>
           </div>
         </a>
@@ -82,7 +112,7 @@ export function generateArticleLayout(
           <div key={4} style={styles.previewBoxLayout}>
             <div style={{ ...styles.titleLayout, textAlign: 'center' }}>{title}</div>
             <div style={styles.imageLayout}>
-              <div style={{ ...styles.imageBgLayout, backgroundImage: `url(${imageSrc})` }}></div>
+              <div style={{ ...styles.imageBgLayout, ...backgroundStyles }}></div>
             </div>
             <div style={{ ...styles.dateLayout, textAlign: 'center' }}>{dateTimeAgo}</div>
           </div>

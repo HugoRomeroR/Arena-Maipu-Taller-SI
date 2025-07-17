@@ -1,15 +1,55 @@
 import imageLayout from "../../../public/placeholder-bg.jpg";
 
-export const PreviewLayouts = ({ title }: { title: string }): React.ReactNode[] => {
-    return (title === '') ? layouts({ title: '¡Mi Nuevo Artículo!' }) : layouts({ title: title });
-}
+export const PreviewLayouts = ({
+  title,
+  background,
+}: {
+  title: string;
+  background: string;
+}): React.ReactNode[] => {
+  const fixedTitle = title === '' ? '¡Mi Nuevo Artículo!' : title;
+  return layouts({ title: fixedTitle, background });
+};
 
-const layouts = ({ title }: { title: string }): React.ReactNode[] => [
+// 🔧 Función para generar estilos dinámicos según el tipo de fondo
+const getBackgroundStyles = (background: string): React.CSSProperties => {
+  if (!background) {
+    const defaultImage = `${imageLayout.src}`;
+    return {
+      backgroundColor: 'transparent',
+      backgroundImage: `url(${defaultImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    };
+  }
+
+  if (background.startsWith('#')) {
+    return {
+      backgroundColor: background,
+      backgroundImage: 'none',
+    };
+  }
+
+  return {
+    backgroundColor: 'transparent',
+    backgroundImage: `url(${background})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+  };
+};
+
+const layouts = ({
+  title,
+  background,
+}: {
+  title: string;
+  background: string;
+}): React.ReactNode[] => [
   // 1. Imagen / Título / Fecha
   (
     <div key={1} style={styles.previewBoxLayout}>
       <div style={styles.imageLayout}>
-        <div style={styles.imageBgLayout}></div>
+        <div style={{ ...styles.imageBgLayout, ...getBackgroundStyles(background) }}></div>
       </div>
       <div style={styles.titleLayout}>{title}</div>
       <div style={styles.dateLayout}>DD/MM/YY</div>
@@ -20,9 +60,16 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
   (
     <div key={2} style={{ ...styles.previewBoxLayout, flexDirection: 'row' }}>
       <div style={{ ...styles.imageLayout, flexBasis: '65%', flexShrink: 0 }}>
-        <div style={styles.imageBgLayout}></div>
+        <div style={{ ...styles.imageBgLayout, ...getBackgroundStyles(background) }}></div>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', flexBasis: '35%', flexShrink: 0 }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flexBasis: '35%',
+          flexShrink: 0,
+        }}
+      >
         <div
           style={{
             ...styles.titleLayout,
@@ -57,7 +104,7 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
         <div style={{ ...styles.dateLayout, textAlign: 'right' }}>DD/MM/YY</div>
       </div>
       <div style={{ ...styles.imageLayout, flexBasis: '60%' }}>
-        <div style={styles.imageBgLayout}></div>
+        <div style={{ ...styles.imageBgLayout, ...getBackgroundStyles(background) }}></div>
       </div>
     </div>
   ),
@@ -67,7 +114,7 @@ const layouts = ({ title }: { title: string }): React.ReactNode[] => [
     <div key={4} style={styles.previewBoxLayout}>
       <div style={{ ...styles.titleLayout, textAlign: 'center' }}>{title}</div>
       <div style={styles.imageLayout}>
-        <div style={styles.imageBgLayout}></div>
+        <div style={{ ...styles.imageBgLayout, ...getBackgroundStyles(background) }}></div>
       </div>
       <div style={{ ...styles.dateLayout, textAlign: 'center' }}>DD/MM/YY</div>
     </div>
@@ -103,8 +150,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     height: '100%',
     border: 'none',
     borderRadius: '16px',
-    backgroundImage: `url(${imageLayout.src})`,
-    backgroundSize: 'cover',
+    // El fondo se aplica dinámicamente
   },
   titleLayout: {
     color: 'black',
