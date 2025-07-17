@@ -35,18 +35,13 @@ export default function NuevoArticulo() {
   };
 
   const handleSubmit = async () => {
-    function getLocalDateString() {
-      const now = new Date();
-      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      return now.toISOString().slice(0, 19).replace('T', ' ');
-    }
     const post = {
       title: title,
       background: background,
       content: content,
       slug: slug,
       articleLayout: articleLayout,
-      dateLayout: getLocalDateString(),
+      dateLayout: new Date(),
     };
     const res = await fetch('/api/nuevo-articulo', {
       method: 'POST',
