@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import { useSearchParams } from 'next/navigation';
 
 const canchas = [
   { id: 1, nombre: 'Cancha 1' },
@@ -27,8 +28,12 @@ const horarios = [
 
 export default function CalendarioPage() {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
 
   const [fecha, setFecha] = useState(() => {
+    const param = searchParams.get('fecha');
+    if (param) return param;
+
     const hoy = new Date();
     const yyyy = hoy.getFullYear();
     const mm = String(hoy.getMonth() + 1).padStart(2, '0');
@@ -38,54 +43,81 @@ export default function CalendarioPage() {
 
   const [reservas, setReservas] = useState<any[]>([]);
 
+  useEffect(() => {
+    const fetchReservas = async () => {
+      try {
+        const res = await fetch(`/api/calendarios?fecha=${fecha}`);
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          setReservas(data);
+        }
+      } catch (error) {
+        console.error('Error cargando reservas:', error);
+      }
+    };
+
+    fetchReservas();
+  }, [fecha]);
+
   return (
     <div style={{
       padding: '40px',
-      backgroundColor: '#f4f6f8',
+      backgroundColor: '#eaeff4',
       minHeight: '100vh',
       fontFamily: 'Segoe UI, sans-serif'
     }}>
       <div style={{
-        maxWidth: '1000px',
+        maxWidth: '1100px',
         margin: '0 auto',
-        backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-        padding: '30px'
+        backgroundColor: '#fff',
+        borderRadius: '14px',
+        boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+        padding: '40px'
       }}>
-
         <h2 style={{
-          fontSize: '24px',
-          marginBottom: '20px',
-          borderBottom: '1px solid #e0e0e0',
-          paddingBottom: '10px',
-          color: '#333'
+          fontSize: '28px',
+          color: '#222',
+          marginBottom: '24px',
+          borderBottom: '2px solid #0070f3',
+          paddingBottom: '10px'
         }}>
           Calendario de Canchas
         </h2>
 
-        <label style={{ fontWeight: 'bold' }}>Selecciona una fecha:</label>
+        <label style={{ fontWeight: 600 }}>Selecciona una fecha:</label>
         <input
           type="date"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
-          style={{ marginBottom: 30, display: 'block' }}
+          style={{
+            marginBottom: '30px',
+            display: 'block',
+            padding: '10px 16px',
+            border: '1px solid #ccc',
+            borderRadius: '6px',
+            fontSize: '15px'
+          }}
         />
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-          gap: '20px'
+          gap: '24px'
         }}>
           {canchas.map((cancha) => (
             <div key={cancha.id} style={{
-              backgroundColor: 'white',
+              backgroundColor: '#fafafa',
               padding: '20px',
               borderRadius: '10px',
-              boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+              border: '1px solid #ddd'
             }}>
-              <h3 style={{ color: '#0070f3' }}>{cancha.nombre}</h3>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+              <h3 style={{
+                marginBottom: '12px',
+                color: '#0070f3',
+                fontSize: '20px'
+              }}>{cancha.nombre}</h3>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
                 {horarios.map((hora) => {
                   const estaReservado = reservas.some(
                     r => r.cancha === cancha.nombre && r.hora === hora && r.fecha === fecha
@@ -96,36 +128,34 @@ export default function CalendarioPage() {
                       key={`${cancha.id}-${hora}`}
                       disabled={estaReservado}
                       onClick={() => {
-                        if (session?.user) {
-                          const query = new URLSearchParams({
-                            cancha: cancha.nombre,
-                            hora,
-                            fecha
-                          }).toString();
-                          window.location.href = `/pago?${query}`;
-                        } else {
+                        if (!session?.user) {
                           alert("Debes iniciar sesión para reservar.");
+                          return;
                         }
+
+                        const query = new URLSearchParams({
+                          cancha: cancha.nombre,
+                          hora,
+                          fecha
+                        }).toString();
+
+                        window.location.href = `/pago?${query}`;
                       }}
                       style={{
-                        padding: '8px',
-                        backgroundColor: estaReservado ? '#ccc' : '#f9f9f9',
-                        color: estaReservado ? 'gray' : 'black',
-                        border: '1px solid #ccc',
-                        borderRadius: 8,
+                        padding: '10px',
+                        backgroundColor: estaReservado ? '#ddd' : '#f5f5f5',
+                        color: estaReservado ? '#999' : '#333',
+                        border: '1px solid #bbb',
+                        borderRadius: '8px',
                         width: '90px',
-                        height: '60px',
-                        fontWeight: 'bold',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        boxShadow: '2px 2px 4px rgba(0,0,0,0.1)',
+                        height: '55px',
+                        fontWeight: 600,
+                        fontSize: '12px',
                         cursor: estaReservado ? 'not-allowed' : 'pointer',
-                        fontSize: '12px'
+                        boxShadow: '1px 1px 3px rgba(0,0,0,0.05)'
                       }}
                     >
-                      <div>{hora}</div>
+                      {hora}
                       {estaReservado && <div style={{ fontSize: '10px', color: 'red' }}>Reservado</div>}
                     </button>
                   );
