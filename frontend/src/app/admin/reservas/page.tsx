@@ -2,8 +2,15 @@
 
 import { useEffect, useState } from 'react';
 
+type Reserva = {
+  usuario: string;
+  cancha: string;
+  fecha: string;
+  hora: string;
+};
+
 export default function ReservasAdminPage() {
-  const [reservas, setReservas] = useState([]);
+  const [reservas, setReservas] = useState<Reserva[]>([]);
 
   useEffect(() => {
     const fetchReservas = async () => {

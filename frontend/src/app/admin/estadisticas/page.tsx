@@ -45,6 +45,7 @@ export default function EstadisticasAdminPage() {
       <div>
         <h3 style={{ fontSize: '20px', color: '#0070f3' }}>Clientes frecuentes</h3>
         <ul>
+          { /* eslint-disable-next-line */ }
           {estadisticas.clientes.map((cliente: any, idx: number) => (
             <li key={idx}>
               {cliente.nombre} - {cliente.reservas} reservas

@@ -26,7 +26,7 @@ export default function AdminPage() {
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Panel de Administración</h1>
-      <p>Bienvenido, {session.user.displayname}</p>
+      <p>Bienvenido, {session?.user.displayname}</p>
       {/* Aquí puedes cargar las reservas, estadísticas, etc. */}
     </div>
   );
